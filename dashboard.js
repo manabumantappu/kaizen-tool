@@ -151,3 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
+
+window.exportKaizenJSON = function () {
+  const data = localStorage.getItem("kaizenList") || "[]";
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kaizen-backup.json";
+  a.click();
+};
