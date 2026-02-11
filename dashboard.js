@@ -151,9 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
 });
-
 window.exportKaizenJSON = function () {
   const data = localStorage.getItem("kaizenList") || "[]";
+
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
@@ -161,4 +161,33 @@ window.exportKaizenJSON = function () {
   a.href = url;
   a.download = "kaizen-backup.json";
   a.click();
+};
+
+window.importKaizenJSON = function(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+
+      if (!Array.isArray(importedData)) {
+        alert("Format JSON tidak valid!");
+        return;
+      }
+
+      localStorage.setItem("kaizenList", JSON.stringify(importedData));
+
+      alert("Data berhasil di-restore!");
+      location.reload();
+
+    } catch (err) {
+      alert("Gagal membaca file JSON.");
+    }
+  };
+
+  reader.readAsText(file);
 };

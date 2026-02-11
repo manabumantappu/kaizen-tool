@@ -236,3 +236,19 @@ td {
 .btn-file input {
   display: none;
 }
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.date-row label {
+  min-width: 130px;
+  font-weight: 600;
+}
+
+.date-row input {
+  width: auto;
+  min-width: 160px;
+}
