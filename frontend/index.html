@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Kaizen Tool</title>
   <link rel="stylesheet" href="./style.css">
-
 </head>
 
 <body>
@@ -22,22 +21,17 @@
 
 <h1>Form Kaizen</h1>
 
-<!-- ===== TANGGAL ===== -->
 <label>Tanggal Kaizen</label>
 <input type="date" id="kaizenDateInput">
 
-<!-- ===== FORM ===== -->
 <form id="kaizenForm">
 
-  <!-- SECTION -->
   <label>Section / Area</label>
   <input type="text" id="section" placeholder="Contoh: Assembly Line A">
 
-  <!-- JUDUL -->
   <label>Judul Kaizen</label>
   <input type="text" id="judulKaizen" placeholder="Judul Kaizen">
 
-  <!-- FOTO -->
   <h2>Foto Before & After</h2>
   <div class="photo-row">
 
@@ -59,7 +53,6 @@
 
   <hr>
 
-  <!-- ===== EFEK KAIZEN ===== -->
   <h2>Efek Kaizen</h2>
 
   <h3>⏱ Penghematan Waktu</h3>
@@ -86,13 +79,11 @@
 
   <hr>
 
-  <!-- ===== GRAFIK ===== -->
   <h2>📊 Grafik Saving Kaizen</h2>
   <div class="chart-row">
     <div class="chart-box">
       <canvas id="timeChart"></canvas>
     </div>
-
     <div class="chart-box">
       <canvas id="costChart"></canvas>
     </div>
@@ -100,7 +91,6 @@
 
 </form>
 
-<!-- ===== FOOTER ===== -->
 <div class="footer">
   <div>
     <strong>Prepared by:</strong>
@@ -115,156 +105,17 @@
   </div>
 </div>
 
-<!-- ===== BUTTON ===== -->
 <div style="margin-top:20px">
   <button type="button" onclick="generatePDF()">📄 Generate PDF Kaizen</button>
   <button type="button" onclick="generatePPT()">📊 Generate PPT Kaizen</button>
   <button type="button" onclick="saveKaizen()">💾 Simpan Kaizen</button>
 </div>
 
-<!-- ===== LIBRARY ===== -->
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.11.0/dist/pptxgen.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- ===== ENTRY POINT (CLEAN ARCHITECTURE) ===== -->
 <script src="./main.js"></script>
 
 </body>
 </html>
-=======
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Kaizen Tool</title>
-  <link rel="stylesheet" href="./style.css">
-
-</head>
-
-<body>
-
-<!-- ===== HEADER ===== -->
-<div class="header-bar">
-  <div class="header-content">
-    <img src="assets/logo.png" class="logo">
-    <div class="header-text">
-      <h1>PT HANKEN INDONESIA</h1>
-      <p>Continuous Improvement</p>
-    </div>
-  </div>
-</div>
-
-<h1>Form Kaizen</h1>
-
-<!-- ===== TANGGAL ===== -->
-<label>Tanggal Kaizen</label>
-<input type="date" id="kaizenDateInput">
-
-<!-- ===== FORM ===== -->
-<form id="kaizenForm">
-
-  <!-- SECTION -->
-  <label>Section / Area</label>
-  <input type="text" id="section" placeholder="Contoh: Assembly Line A">
-
-  <!-- JUDUL -->
-  <label>Judul Kaizen</label>
-  <input type="text" id="judulKaizen" placeholder="Judul Kaizen">
-
-  <!-- FOTO -->
-  <h2>Foto Before & After</h2>
-  <div class="photo-row">
-
-    <div class="photo-box">
-      <h3>Before</h3>
-      <input type="file" id="photoBefore" accept="image/*">
-      <input type="text" id="captionBefore" placeholder="Keterangan Before">
-      <img id="previewBefore" style="display:none">
-    </div>
-
-    <div class="photo-box">
-      <h3>After</h3>
-      <input type="file" id="photoAfter" accept="image/*">
-      <input type="text" id="captionAfter" placeholder="Keterangan After">
-      <img id="previewAfter" style="display:none">
-    </div>
-
-  </div>
-
-  <hr>
-
-  <!-- ===== EFEK KAIZEN ===== -->
-  <h2>Efek Kaizen</h2>
-
-  <h3>⏱ Penghematan Waktu</h3>
-  <label>Waktu Sebelum (menit)</label>
-  <input type="number" id="timeBefore">
-
-  <label>Waktu Sesudah (menit)</label>
-  <input type="number" id="timeAfter">
-
-  <p><strong>Hemat Waktu:</strong> <span id="timeSaved">0</span> menit</p>
-  <p><strong>Improvement:</strong> <span id="timePercent">0</span> %</p>
-
-  <hr>
-
-  <h3>💰 Penghematan Cost</h3>
-  <label>Cost Sebelum (Rp)</label>
-  <input type="number" id="costBefore">
-
-  <label>Cost Sesudah (Rp)</label>
-  <input type="number" id="costAfter">
-
-  <p><strong>Hemat Cost:</strong> Rp <span id="costSaved">0</span></p>
-  <p><strong>Saving / Tahun:</strong> Rp <span id="costYear">0</span></p>
-
-  <hr>
-
-  <!-- ===== GRAFIK ===== -->
-  <h2>📊 Grafik Saving Kaizen</h2>
-  <div class="chart-row">
-    <div class="chart-box">
-      <canvas id="timeChart"></canvas>
-    </div>
-
-    <div class="chart-box">
-      <canvas id="costChart"></canvas>
-    </div>
-  </div>
-
-</form>
-
-<!-- ===== FOOTER ===== -->
-<div class="footer">
-  <div>
-    <strong>Prepared by:</strong>
-    <input type="text" id="preparedBy" placeholder="Nama PIC">
-  </div>
-  <div>
-    <strong>Approved by:</strong>
-    <input type="text" id="approvedBy" placeholder="Manager / Leader">
-  </div>
-  <div>
-    <strong>Date:</strong> <span id="todayDate"></span>
-  </div>
-</div>
-
-<!-- ===== BUTTON ===== -->
-<div style="margin-top:20px">
-  <button type="button" onclick="generatePDF()">📄 Generate PDF Kaizen</button>
-  <button type="button" onclick="generatePPT()">📊 Generate PPT Kaizen</button>
-  <button type="button" onclick="saveKaizen()">💾 Simpan Kaizen</button>
-</div>
-
-<!-- ===== LIBRARY ===== -->
-<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.11.0/dist/pptxgen.bundle.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- ===== ENTRY POINT (CLEAN ARCHITECTURE) ===== -->
-<script src="./main.js"></script>
-
-</body>
-</html>
->>>>>>> 6d1a56fdff9fb21b535ce3daf202dc325d629f3b
