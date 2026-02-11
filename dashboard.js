@@ -184,46 +184,7 @@ function drawChart(totalTime, totalCost) {
   });
 }
 
-
-  costChart = new Chart(document.getElementById("costChart"), {
-    type: "bar",
-    data: {
-      labels: ["Total Hemat Cost"],
-      datasets: [
-        {
-          label: "Hemat Cost (Rp)",
-          data: [totalCost],
-          backgroundColor: "#27ae60"
-        },
-        {
-          type: "line",
-          label: "Target",
-          data: [targetCost],
-          borderColor: "#e74c3c",
-          borderWidth: 2,
-          borderDash: [6,6],
-          pointRadius: 0
-        }
-      ]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Total Saving Cost"
-        },
-        legend: {
-          display: true
-        }
-      },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  });
-}
-
-  // ===== ACTION =====
+ // ===== ACTION =====
   window.showPhoto = i => {
     const item = data[i];
     document.getElementById("modalBefore").src = item.photoBefore || "";
