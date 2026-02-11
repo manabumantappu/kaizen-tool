@@ -83,8 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== CHART =====
 function drawChart(totalTime, totalCost) {
 
-  const targetTime = 20;        // 🎯 target menit
-  const targetCost = 300000;    // 🎯 target rupiah
+  const targetTime = 20;
+  const targetCost = 300000;
 
   if (timeChart) timeChart.destroy();
   if (costChart) costChart.destroy();
@@ -97,22 +97,11 @@ function drawChart(totalTime, totalCost) {
     type: "bar",
     data: {
       labels: ["Total Hemat Waktu"],
-      datasets: [
-        {
-          label: "Hemat Waktu (Menit)",
-          data: [totalTime],
-          backgroundColor: timeColor
-        },
-        {
-          type: "line",
-          label: "Target",
-          data: [targetTime],
-          borderColor: "#e74c3c",
-          borderWidth: 2,
-          borderDash: [6,6],
-          pointRadius: 0
-        }
-      ]
+      datasets: [{
+        label: "Hemat Waktu (Menit)",
+        data: [totalTime],
+        backgroundColor: timeColor
+      }]
     },
     options: {
       plugins: {
@@ -123,18 +112,29 @@ function drawChart(totalTime, totalCost) {
         legend: {
           display: true
         },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-          font: { weight: 'bold' },
-          color: '#000'
+        annotation: {
+          annotations: {
+            line1: {
+              type: "line",
+              yMin: targetTime,
+              yMax: targetTime,
+              borderColor: "#f39c12",
+              borderWidth: 2,
+              borderDash: [6,6],
+              label: {
+                enabled: true,
+                content: "Target: " + targetTime + " menit",
+                position: "end",
+                backgroundColor: "#f39c12"
+              }
+            }
+          }
         }
       },
       scales: {
         y: { beginAtZero: true }
       }
-    },
-    plugins: [ChartDataLabels]
+    }
   });
 
   // ===== COST CHART =====
@@ -142,22 +142,11 @@ function drawChart(totalTime, totalCost) {
     type: "bar",
     data: {
       labels: ["Total Hemat Cost"],
-      datasets: [
-        {
-          label: "Hemat Cost (Rp)",
-          data: [totalCost],
-          backgroundColor: costColor
-        },
-        {
-          type: "line",
-          label: "Target",
-          data: [targetCost],
-          borderColor: "#e74c3c",
-          borderWidth: 2,
-          borderDash: [6,6],
-          pointRadius: 0
-        }
-      ]
+      datasets: [{
+        label: "Hemat Cost (Rp)",
+        data: [totalCost],
+        backgroundColor: costColor
+      }]
     },
     options: {
       plugins: {
@@ -168,21 +157,32 @@ function drawChart(totalTime, totalCost) {
         legend: {
           display: true
         },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-          font: { weight: 'bold' },
-          formatter: value => "Rp " + value.toLocaleString("id-ID"),
-          color: '#000'
+        annotation: {
+          annotations: {
+            line1: {
+              type: "line",
+              yMin: targetCost,
+              yMax: targetCost,
+              borderColor: "#f39c12",
+              borderWidth: 2,
+              borderDash: [6,6],
+              label: {
+                enabled: true,
+                content: "Target: Rp " + targetCost.toLocaleString("id-ID"),
+                position: "end",
+                backgroundColor: "#f39c12"
+              }
+            }
+          }
         }
       },
       scales: {
         y: { beginAtZero: true }
       }
-    },
-    plugins: [ChartDataLabels]
+    }
   });
 }
+
 
  // ===== ACTION =====
   window.showPhoto = i => {
