@@ -81,41 +81,147 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== CHART =====
-  function drawChart(totalTime, totalCost) {
+function drawChart(totalTime, totalCost) {
 
-    if (timeChart) timeChart.destroy();
-    if (costChart) costChart.destroy();
+  const targetTime = 20;        // 🎯 target menit
+  const targetCost = 300000;    // 🎯 target rupiah
 
-    timeChart = new Chart(document.getElementById("timeChart"), {
-      type: "bar",
-      data: {
-        labels: ["Total Hemat Waktu"],
-        datasets: [{
+  if (timeChart) timeChart.destroy();
+  if (costChart) costChart.destroy();
+
+  const timeColor = totalTime >= targetTime ? "#27ae60" : "#e74c3c";
+  const costColor = totalCost >= targetCost ? "#27ae60" : "#e74c3c";
+
+  // ===== TIME CHART =====
+  timeChart = new Chart(document.getElementById("timeChart"), {
+    type: "bar",
+    data: {
+      labels: ["Total Hemat Waktu"],
+      datasets: [
+        {
+          label: "Hemat Waktu (Menit)",
           data: [totalTime],
-          backgroundColor: "#27ae60"
-        }]
+          backgroundColor: timeColor
+        },
+        {
+          type: "line",
+          label: "Target",
+          data: [targetTime],
+          borderColor: "#e74c3c",
+          borderWidth: 2,
+          borderDash: [6,6],
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: "Total Saving Waktu"
+        },
+        legend: {
+          display: true
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          font: { weight: 'bold' },
+          color: '#000'
+        }
       },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
+      scales: {
+        y: { beginAtZero: true }
       }
-    });
+    },
+    plugins: [ChartDataLabels]
+  });
 
-    costChart = new Chart(document.getElementById("costChart"), {
-      type: "bar",
-      data: {
-        labels: ["Total Hemat Cost"],
-        datasets: [{
+  // ===== COST CHART =====
+  costChart = new Chart(document.getElementById("costChart"), {
+    type: "bar",
+    data: {
+      labels: ["Total Hemat Cost"],
+      datasets: [
+        {
+          label: "Hemat Cost (Rp)",
+          data: [totalCost],
+          backgroundColor: costColor
+        },
+        {
+          type: "line",
+          label: "Target",
+          data: [targetCost],
+          borderColor: "#e74c3c",
+          borderWidth: 2,
+          borderDash: [6,6],
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: "Total Saving Cost"
+        },
+        legend: {
+          display: true
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          font: { weight: 'bold' },
+          formatter: value => "Rp " + value.toLocaleString("id-ID"),
+          color: '#000'
+        }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+}
+
+
+  costChart = new Chart(document.getElementById("costChart"), {
+    type: "bar",
+    data: {
+      labels: ["Total Hemat Cost"],
+      datasets: [
+        {
+          label: "Hemat Cost (Rp)",
           data: [totalCost],
           backgroundColor: "#27ae60"
-        }]
+        },
+        {
+          type: "line",
+          label: "Target",
+          data: [targetCost],
+          borderColor: "#e74c3c",
+          borderWidth: 2,
+          borderDash: [6,6],
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: "Total Saving Cost"
+        },
+        legend: {
+          display: true
+        }
       },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } }
+      scales: {
+        y: { beginAtZero: true }
       }
-    });
-  }
+    }
+  });
+}
 
   // ===== ACTION =====
   window.showPhoto = i => {
