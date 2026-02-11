@@ -1,7 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const data = JSON.parse(localStorage.getItem("kaizenList")) || [];
+  // ================= STORAGE =================
+  let data = JSON.parse(localStorage.getItem("kaizenList")) || [];
 
+  let targetTime = Number(localStorage.getItem("targetTime")) || 20;
+  let targetCost = Number(localStorage.getItem("targetCost")) || 300000;
+
+  // ================= ELEMENT =================
   const tbody = document.querySelector("#kaizenTable tbody");
   const filterMonth = document.getElementById("filterMonth");
   const filterYear  = document.getElementById("filterYear");
@@ -10,11 +15,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalTimeEl   = document.getElementById("totalTime");
   const totalCostEl   = document.getElementById("totalCost");
 
+  const targetTimeInput = document.getElementById("targetTimeInput");
+  const targetCostInput = document.getElementById("targetCostInput");
+
   let timeChart = null;
   let costChart = null;
 
-  // ===== INIT YEAR FILTER =====
-  const years = [...new Set(data.map(k => new Date(k.date).getFullYear()))];
+  // ================= INIT TARGET INPUT =================
+  if (targetTimeInput) targetTimeInput.value = targetTime;
+  if (targetCostInput) targetCostInput.value = targetCost;
+
+  window.updateTarget = function() {
+    const tTime = Number(targetTimeInput.value);
+    const tCost = Number(targetCostInput.value);
+
+    if (tTime <= 0 || tCost <= 0) {
+      alert("Target tidak valid!");
+      return;
+    }
+
+    targetTime = tTime;
+    targetCost = tCost;
+
+    localStorage.setItem("targetTime", targetTime);
+    localStorage.setItem("targetCost", targetCost);
+
+    alert("Target berhasil diupdate!");
+    render();
+  };
+
+  // ================= INIT YEAR FILTER =================
+  const years = [...new Set(
+    data
+      .filter(k => k.date)
+      .map(k => new Date(k.date).getFullYear())
+  )];
 
   years.forEach(y => {
     const opt = document.createElement("option");
@@ -23,8 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
     filterYear.appendChild(opt);
   });
 
-  // ===== RENDER FUNCTION =====
+  // ================= RENDER =================
   function render() {
+
+    data = JSON.parse(localStorage.getItem("kaizenList")) || [];
 
     const m = filterMonth.value;
     const y = filterYear.value;
@@ -67,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>Rp ${fmt(costSaved)}</td>
           <td>
             <button onclick="showPhoto(${k._idx})">📷</button>
+            <button onclick="editKaizen(${k._idx})">✏️</button>
             <button onclick="hapus(${k._idx})">🗑️</button>
           </td>
         </tr>
@@ -80,131 +118,116 @@ document.addEventListener("DOMContentLoaded", () => {
     drawChart(totalTime, totalCost);
   }
 
-  // ===== CHART =====
-function drawChart(totalTime, totalCost) {
+  // ================= CHART =================
+  function drawChart(totalTime, totalCost) {
 
-  const targetTime = 20;
-  const targetCost = 300000;
+    if (timeChart) timeChart.destroy();
+    if (costChart) costChart.destroy();
 
-  if (timeChart) timeChart.destroy();
-  if (costChart) costChart.destroy();
+    const corporateBlue = "#0a3d62";
+    const targetGray = "#bdc3c7";
 
-  const timeColor = totalTime >= targetTime ? "#27ae60" : "#e74c3c";
-  const costColor = totalCost >= targetCost ? "#27ae60" : "#e74c3c";
-
-  // ===== TIME CHART =====
-  timeChart = new Chart(document.getElementById("timeChart"), {
-    type: "bar",
-    data: {
-      labels: ["Total Hemat Waktu"],
-      datasets: [{
-        label: "Hemat Waktu (Menit)",
-        data: [totalTime],
-        backgroundColor: timeColor
-      }]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Total Saving Waktu"
-        },
-        legend: {
-          display: true
-        },
-        annotation: {
-          annotations: {
-            line1: {
-              type: "line",
-              yMin: targetTime,
-              yMax: targetTime,
-              borderColor: "#f39c12",
-              borderWidth: 2,
-              borderDash: [6,6],
-              label: {
-                enabled: true,
-                content: "Target: " + targetTime + " menit",
-                position: "end",
-                backgroundColor: "#f39c12"
-              }
-            }
+    // ===== TIME =====
+    timeChart = new Chart(document.getElementById("timeChart"), {
+      type: "bar",
+      data: {
+        labels: [""],
+        datasets: [
+          { label: "Target", data: [targetTime], backgroundColor: targetGray },
+          { label: "Realisasi", data: [totalTime], backgroundColor: corporateBlue }
+        ]
+      },
+      options: {
+        responsive: true,
+        layout: { padding: { top: 60 } },
+        plugins: {
+          title: {
+            display: true,
+            text: "Total Saving Waktu (Menit)",
+            padding: { bottom: 40 }
+          },
+          legend: {
+            position: "bottom"
+          },
+          datalabels: {
+            anchor: "end",
+            align: "end",
+            font: { weight: "bold", size: 12 },
+            color: "#000"
           }
+        },
+        scales: {
+          y: { beginAtZero: true },
+          x: { display: false }
         }
       },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  });
+      plugins: [ChartDataLabels]
+    });
 
-  // ===== COST CHART =====
-  costChart = new Chart(document.getElementById("costChart"), {
-    type: "bar",
-    data: {
-      labels: ["Total Hemat Cost"],
-      datasets: [{
-        label: "Hemat Cost (Rp)",
-        data: [totalCost],
-        backgroundColor: costColor
-      }]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Total Saving Cost"
-        },
-        legend: {
-          display: true
-        },
-        annotation: {
-          annotations: {
-            line1: {
-              type: "line",
-              yMin: targetCost,
-              yMax: targetCost,
-              borderColor: "#f39c12",
-              borderWidth: 2,
-              borderDash: [6,6],
-              label: {
-                enabled: true,
-                content: "Target: Rp " + targetCost.toLocaleString("id-ID"),
-                position: "end",
-                backgroundColor: "#f39c12"
-              }
-            }
+    // ===== COST =====
+    costChart = new Chart(document.getElementById("costChart"), {
+      type: "bar",
+      data: {
+        labels: [""],
+        datasets: [
+          { label: "Target", data: [targetCost], backgroundColor: targetGray },
+          { label: "Realisasi", data: [totalCost], backgroundColor: corporateBlue }
+        ]
+      },
+      options: {
+        responsive: true,
+        layout: { padding: { top: 60 } },
+        plugins: {
+          title: {
+            display: true,
+            text: "Total Saving Cost (Rp)",
+            padding: { bottom: 40 }
+          },
+          legend: {
+            position: "bottom"
+          },
+          datalabels: {
+            anchor: "end",
+            align: "end",
+            font: { weight: "bold", size: 12 },
+            formatter: value => "Rp " + value.toLocaleString("id-ID"),
+            color: "#000"
           }
+        },
+        scales: {
+          y: { beginAtZero: true },
+          x: { display: false }
         }
       },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  });
-}
+      plugins: [ChartDataLabels]
+    });
+  }
 
+  // ================= ACTION =================
+  window.editKaizen = function(i) {
+    localStorage.setItem("editIndex", i);
+    window.location.href = "index.html";
+  };
 
- // ===== ACTION =====
-  window.showPhoto = i => {
+  window.hapus = function(i) {
+    if (!confirm("Hapus Kaizen?")) return;
+    data.splice(i, 1);
+    localStorage.setItem("kaizenList", JSON.stringify(data));
+    render();
+  };
+
+  window.showPhoto = function(i) {
     const item = data[i];
     document.getElementById("modalBefore").src = item.photoBefore || "";
-    document.getElementById("modalAfter").src  = item.photoAfter  || "";
+    document.getElementById("modalAfter").src  = item.photoAfter || "";
     document.getElementById("photoModal").style.display = "flex";
   };
 
-  window.closeModal = () => {
+  window.closeModal = function() {
     document.getElementById("photoModal").style.display = "none";
   };
 
-  window.hapus = i => {
-    if (confirm("Hapus Kaizen?")) {
-      data.splice(i, 1);
-      localStorage.setItem("kaizenList", JSON.stringify(data));
-      render();
-    }
-  };
-
-  // ===== UTIL =====
+  // ================= UTIL =================
   function fmt(n) {
     return (Number(n) || 0).toLocaleString("id-ID");
   }
@@ -218,43 +241,3 @@ function drawChart(totalTime, totalCost) {
 
   render();
 });
-window.exportKaizenJSON = function () {
-  const data = localStorage.getItem("kaizenList") || "[]";
-
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "kaizen-backup.json";
-  a.click();
-};
-
-window.importKaizenJSON = function(event) {
-
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-    try {
-      const importedData = JSON.parse(e.target.result);
-
-      if (!Array.isArray(importedData)) {
-        alert("Format JSON tidak valid!");
-        return;
-      }
-
-      localStorage.setItem("kaizenList", JSON.stringify(importedData));
-
-      alert("Data berhasil di-restore!");
-      location.reload();
-
-    } catch (err) {
-      alert("Gagal membaca file JSON.");
-    }
-  };
-
-  reader.readAsText(file);
-};

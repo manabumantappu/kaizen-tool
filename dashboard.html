@@ -66,6 +66,22 @@
 <!-- ===== CHART ===== -->
 <h2>📊 Grafik Saving</h2>
 
+<div style="margin:20px 0; display:flex; gap:20px; align-items:center;">
+  
+  <div>
+    <label>🎯 Target Waktu (Menit)</label><br>
+    <input type="number" id="targetTimeInput" style="padding:5px; width:120px;">
+  </div>
+
+  <div>
+    <label>🎯 Target Cost (Rp)</label><br>
+    <input type="number" id="targetCostInput" style="padding:5px; width:160px;">
+  </div>
+
+  <button onclick="updateTarget()">Update Target</button>
+
+</div>
+
 <div class="chart-row">
   <div class="chart-box">
     <canvas id="timeChart"></canvas>
