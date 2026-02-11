@@ -65,26 +65,51 @@ document.addEventListener("DOMContentLoaded", () => {
   const costChartCtx = document.getElementById("costChart");
 
   let timeChart = new Chart(timeChartCtx, {
-    type: "bar",
-    data: {
-      labels: ["Before", "After"],
-      datasets: [{
-        label: "Time (minutes)",
-        data: [0, 0]
-      }]
+  type: "bar",
+  data: {
+    labels: ["Before", "After"],
+    datasets: [{
+      label: "Time (minutes)",
+      data: [0, 0],
+      backgroundColor: [
+        "#e74c3c",  // Before - merah
+        "#27ae60"   // After - hijau
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
     }
-  });
+  }
+});
 
   let costChart = new Chart(costChartCtx, {
-    type: "bar",
-    data: {
-      labels: ["Before", "After"],
-      datasets: [{
-        label: "Cost (Rp)",
-        data: [0, 0]
-      }]
+  type: "bar",
+  data: {
+    labels: ["Before", "After"],
+    datasets: [{
+      label: "Cost (Rp)",
+      data: [0, 0],
+      backgroundColor: [
+        "#e74c3c",  // Before - merah
+        "#27ae60"   // After - hijau
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
     }
-  });
+  }
+});
+
 
   function updateChart(tb, ta, cb, ca) {
     timeChart.data.datasets[0].data = [tb, ta];
