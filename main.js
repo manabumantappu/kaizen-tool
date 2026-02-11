@@ -153,4 +153,8 @@ window.saveKaizen = function() {
 
   alert("Kaizen berhasil disimpan!");
 };
+window.goDashboard = function () {
+  window.open("dashboard.html", "_blank");
+};
+
 
