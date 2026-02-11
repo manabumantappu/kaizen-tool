@@ -130,5 +130,27 @@ window.generatePPT = function() {
 };
 
 window.saveKaizen = function() {
-  alert("Data saved (connect to localStorage if needed)");
+
+  const data = {
+    date: document.getElementById("kaizenDateInput").value,
+    section: document.getElementById("section").value,
+    title: document.getElementById("judulKaizen").value,
+    timeBefore: Number(document.getElementById("timeBefore").value),
+    timeAfter: Number(document.getElementById("timeAfter").value),
+    costBefore: Number(document.getElementById("costBefore").value),
+    costAfter: Number(document.getElementById("costAfter").value),
+    preparedBy: document.getElementById("preparedBy").value,
+    approvedBy: document.getElementById("approvedBy").value,
+    photoBefore: document.getElementById("previewBefore").src || "",
+    photoAfter: document.getElementById("previewAfter").src || ""
+  };
+
+  let kaizenList = JSON.parse(localStorage.getItem("kaizenList")) || [];
+
+  kaizenList.push(data);
+
+  localStorage.setItem("kaizenList", JSON.stringify(kaizenList));
+
+  alert("Kaizen berhasil disimpan!");
 };
+
