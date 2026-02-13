@@ -226,3 +226,65 @@ if (targetCostInput) targetCostInput.value = targetCost;
 
   loadData();
 });
+// ===== BACKUP FIREBASE =====
+window.exportKaizenJSON = async function () {
+
+  const allData = await getAllKaizens();
+
+  if (!allData.length) {
+    alert("Tidak ada data untuk dibackup!");
+    return;
+  }
+
+  const blob = new Blob(
+    [JSON.stringify(allData, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kaizen-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+};
+import { saveKaizenToFirebase } 
+from "./services/firebaseService.js";
+window.importKaizenJSON = async function(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async function(e) {
+    try {
+
+      const importedData = JSON.parse(e.target.result);
+
+      if (!Array.isArray(importedData)) {
+        alert("Format JSON tidak valid!");
+        return;
+      }
+
+      for (const item of importedData) {
+        delete item.id;
+        delete item.createdAt;
+        await saveKaizenToFirebase(item);
+      }
+
+      alert("Restore berhasil!");
+      loadData();
+
+    } catch (err) {
+      alert("Gagal membaca file.");
+    }
+  };
+
+  reader.readAsText(file);
+  event.target.value = "";
+};
