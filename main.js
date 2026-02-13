@@ -8,6 +8,8 @@ import { saveKaizen }
 from "./usecases/saveKaizen.js";
 
 document.addEventListener("DOMContentLoaded", async () => { // ✅ tambahkan async
+document.getElementById("dateDash").innerText =
+  new Date().toLocaleDateString("id-ID");
 
   const timeBefore = document.getElementById("timeBefore");
   const timeAfter = document.getElementById("timeAfter");
