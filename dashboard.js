@@ -254,7 +254,7 @@ window.exportKaizenJSON = async function () {
 };
 import { saveKaizenToFirebase } 
 from "./services/firebaseService.js";
-window.importKaizenJSON = async function(event) {
+window.importKaizenJSON = function(event) {
 
   const file = event.target.files[0];
   if (!file) return;
@@ -262,29 +262,47 @@ window.importKaizenJSON = async function(event) {
   const reader = new FileReader();
 
   reader.onload = async function(e) {
+
     try {
 
-      const importedData = JSON.parse(e.target.result);
+      const text = e.target.result;
+      const importedData = JSON.parse(text);
 
       if (!Array.isArray(importedData)) {
-        alert("Format JSON tidak valid!");
+        alert("Format JSON tidak valid! Harus berupa array.");
         return;
       }
 
-      for (const item of importedData) {
-        delete item.id;
-        delete item.createdAt;
-        await saveKaizenToFirebase(item);
+      for (let item of importedData) {
+
+        // Bersihkan field yang tidak perlu
+        const cleanData = {
+          date: item.date || "",
+          section: item.section || "",
+          title: item.title || "",
+          timeBefore: Number(item.timeBefore) || 0,
+          timeAfter: Number(item.timeAfter) || 0,
+          costBefore: Number(item.costBefore) || 0,
+          costAfter: Number(item.costAfter) || 0,
+          preparedBy: item.preparedBy || "",
+          approvedBy: item.approvedBy || "",
+          photoBefore: item.photoBefore || "",
+          photoAfter: item.photoAfter || ""
+        };
+
+        await saveKaizenToFirebase(cleanData);
       }
 
       alert("Restore berhasil!");
       loadData();
 
     } catch (err) {
-      alert("Gagal membaca file.");
+      console.error(err);
+      alert("File JSON rusak atau format salah.");
     }
   };
 
   reader.readAsText(file);
   event.target.value = "";
 };
+
