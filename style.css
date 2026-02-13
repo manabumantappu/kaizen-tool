@@ -252,3 +252,9 @@ td {
   width: auto;
   min-width: 160px;
 }
+.chart-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
