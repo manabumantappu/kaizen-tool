@@ -1,3 +1,9 @@
+import {
+  saveKaizenToFirebase,
+  updateKaizenById,
+  getKaizenById
+} from "./services/firebaseService.js";
+
 import { saveKaizen } 
 from "./usecases/saveKaizen.js";
 
@@ -17,6 +23,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const photoAfter = document.getElementById("photoAfter");
   const previewBefore = document.getElementById("previewBefore");
   const previewAfter = document.getElementById("previewAfter");
+const urlParams = new URLSearchParams(window.location.search);
+const editId = urlParams.get("id");
+
+if (editId) {
+  const data = await getKaizenById(editId);
+
+  document.getElementById("kaizenDateInput").value = data.date;
+  document.getElementById("section").value = data.section;
+  document.getElementById("judulKaizen").value = data.title;
+  document.getElementById("timeBefore").value = data.timeBefore;
+  document.getElementById("timeAfter").value = data.timeAfter;
+  document.getElementById("costBefore").value = data.costBefore;
+  document.getElementById("costAfter").value = data.costAfter;
+
+  if (data.photoBefore)
+    document.getElementById("previewBefore").src = data.photoBefore;
+
+  if (data.photoAfter)
+    document.getElementById("previewAfter").src = data.photoAfter;
+}
 
   function previewImage(input, preview) {
     input.addEventListener("change", () => {
