@@ -67,7 +67,18 @@
 <h2>📊 Grafik Saving</h2>
 
 <div class="target-setting">
- 
+  
+  <div class="chart-row">
+    <div class="chart-box">
+      <canvas id="timeChart" height="400"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <canvas id="costChart" height="400"></canvas>
+    </div>
+  </div>
+</div>
+  
   <div>
     <label>🎯 Target Waktu (Menit)</label><br>
     <input type="number" id="targetTimeInput" style="padding:5px; width:120px;">
@@ -82,16 +93,6 @@
 
 </div>
 
-<div class="chart-row">
-  <div class="chart-box">
-   <canvas id="timeChart" height="350"></canvas>
-
-  </div>
-
-  <div class="chart-box">
- <canvas id="costChart" height="350"></canvas>
-  </div>
-</div>
 
 <!-- ===== FOOTER ===== -->
 <div class="footer">
