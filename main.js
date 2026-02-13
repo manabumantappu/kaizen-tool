@@ -7,7 +7,7 @@ import {
 import { saveKaizen } 
 from "./usecases/saveKaizen.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => { // ✅ tambahkan async
 
   const timeBefore = document.getElementById("timeBefore");
   const timeAfter = document.getElementById("timeAfter");
@@ -23,27 +23,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const photoAfter = document.getElementById("photoAfter");
   const previewBefore = document.getElementById("previewBefore");
   const previewAfter = document.getElementById("previewAfter");
-const urlParams = new URLSearchParams(window.location.search);
-const editId = urlParams.get("id");
 
-if (editId) {
-  const data = await getKaizenById(editId);
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get("id");
 
-  document.getElementById("kaizenDateInput").value = data.date;
-  document.getElementById("section").value = data.section;
-  document.getElementById("judulKaizen").value = data.title;
-  document.getElementById("timeBefore").value = data.timeBefore;
-  document.getElementById("timeAfter").value = data.timeAfter;
-  document.getElementById("costBefore").value = data.costBefore;
-  document.getElementById("costAfter").value = data.costAfter;
+  // ================= EDIT MODE =================
+  if (editId) {
+    const data = await getKaizenById(editId); // ✅ sekarang aman
 
-  if (data.photoBefore)
-    document.getElementById("previewBefore").src = data.photoBefore;
+    document.getElementById("kaizenDateInput").value = data.date || "";
+    document.getElementById("section").value = data.section || "";
+    document.getElementById("judulKaizen").value = data.title || "";
+    document.getElementById("timeBefore").value = data.timeBefore || 0;
+    document.getElementById("timeAfter").value = data.timeAfter || 0;
+    document.getElementById("costBefore").value = data.costBefore || 0;
+    document.getElementById("costAfter").value = data.costAfter || 0;
 
-  if (data.photoAfter)
-    document.getElementById("previewAfter").src = data.photoAfter;
-}
+    if (data.photoBefore) {
+      previewBefore.src = data.photoBefore;
+      previewBefore.style.display = "block";
+    }
 
+    if (data.photoAfter) {
+      previewAfter.src = data.photoAfter;
+      previewAfter.style.display = "block";
+    }
+  }
+
+  // ================= PREVIEW FOTO =================
   function previewImage(input, preview) {
     input.addEventListener("change", () => {
       const file = input.files[0];
@@ -61,6 +68,7 @@ if (editId) {
   previewImage(photoBefore, previewBefore);
   previewImage(photoAfter, previewAfter);
 
+  // ================= CHART =================
   const timeChart = new Chart(document.getElementById("timeChart"), {
     type: "bar",
     data: {
@@ -94,6 +102,7 @@ if (editId) {
     costChart.update();
   }
 
+  // ================= CALCULATE =================
   function calculate() {
     const tb = parseFloat(timeBefore.value) || 0;
     const ta = parseFloat(timeAfter.value) || 0;
@@ -117,9 +126,13 @@ if (editId) {
   timeAfter.addEventListener("input", calculate);
   costBefore.addEventListener("input", calculate);
   costAfter.addEventListener("input", calculate);
+
 });
 
+
+// ================= SAVE =================
 window.saveKaizen = async function() {
+
   const newData = {
     date: document.getElementById("kaizenDateInput").value,
     section: document.getElementById("section").value,
