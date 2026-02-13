@@ -345,3 +345,52 @@ window.exportKaizenJSON = async function () {
     alert("Gagal melakukan backup.");
   }
 };
+// ================= RESTORE =================
+window.importKaizenJSON = function (event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async function (e) {
+
+    try {
+
+      const importedData = JSON.parse(e.target.result);
+
+      const dataArray = Array.isArray(importedData)
+        ? importedData
+        : [importedData];
+
+      for (const item of dataArray) {
+
+        const cleanData = {
+          date: item.date || "",
+          section: item.section || "",
+          title: item.title || "",
+          timeBefore: Number(item.timeBefore) || 0,
+          timeAfter: Number(item.timeAfter) || 0,
+          costBefore: Number(item.costBefore) || 0,
+          costAfter: Number(item.costAfter) || 0,
+          preparedBy: item.preparedBy || "",
+          approvedBy: item.approvedBy || "",
+          photoBefore: item.photoBefore || "",
+          photoAfter: item.photoAfter || ""
+        };
+
+        await saveKaizenToFirebase(cleanData);
+      }
+
+      alert("Restore berhasil!");
+      window.loadData(); // reload dashboard
+
+    } catch (err) {
+      console.error("RESTORE ERROR:", err);
+      alert("File JSON tidak valid atau rusak.");
+    }
+  };
+
+  reader.readAsText(file);
+  event.target.value = "";
+};
