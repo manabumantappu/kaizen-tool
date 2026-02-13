@@ -1,6 +1,5 @@
-// usecases/saveKaizen.js
-
-import { saveKaizenToFirebase } from "../services/firebaseService.js";
+import { saveKaizenToFirebase } 
+from "../services/firebaseService.js";
 
 export async function saveKaizen(data) {
   try {

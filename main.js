@@ -1,140 +1,57 @@
-import { saveKaizenToFirebase } 
-from "./services/firebaseService.js";
+import { 
+  getAllKaizens, 
+  deleteKaizenById 
+} from "./services/firebaseService.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  // ================= ELEMENT =================
-  const timeBefore = document.getElementById("timeBefore");
-  const timeAfter = document.getElementById("timeAfter");
-  const timeSaved = document.getElementById("timeSaved");
-  const timePercent = document.getElementById("timePercent");
+  const tbody = document.querySelector("#kaizenTable tbody");
+  let data = [];
 
-  const costBefore = document.getElementById("costBefore");
-  const costAfter = document.getElementById("costAfter");
-  const costSaved = document.getElementById("costSaved");
-  const costYear = document.getElementById("costYear");
+  async function loadData() {
+    data = await getAllKaizens();
+    render();
+  }
 
-  const photoBefore = document.getElementById("photoBefore");
-  const photoAfter = document.getElementById("photoAfter");
-  const previewBefore = document.getElementById("previewBefore");
-  const previewAfter = document.getElementById("previewAfter");
+  function render() {
+    tbody.innerHTML = "";
 
-  // ================= FOTO PREVIEW =================
-  function previewImage(input, preview) {
-    input.addEventListener("change", () => {
-      const file = input.files[0];
-      if (!file) return;
+    if (data.length === 0) {
+      tbody.innerHTML =
+        `<tr><td colspan="7">Tidak ada data</td></tr>`;
+      return;
+    }
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        preview.src = e.target.result;
-        preview.style.display = "block";
-      };
-      reader.readAsDataURL(file);
+    data.forEach((k, i) => {
+      const timeSaved =
+        (k.timeBefore || 0) - (k.timeAfter || 0);
+
+      const costSaved =
+        (k.costBefore || 0) - (k.costAfter || 0);
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${k.date}</td>
+          <td>${k.section}</td>
+          <td>${k.title}</td>
+          <td>${timeSaved}</td>
+          <td>Rp ${costSaved}</td>
+          <td>
+            <button onclick="hapus('${k.id}')">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      `;
     });
   }
 
-  previewImage(photoBefore, previewBefore);
-  previewImage(photoAfter, previewAfter);
-
-  // ================= KALKULASI =================
-  function calculate() {
-    const tb = parseFloat(timeBefore.value) || 0;
-    const ta = parseFloat(timeAfter.value) || 0;
-    const cb = parseFloat(costBefore.value) || 0;
-    const ca = parseFloat(costAfter.value) || 0;
-
-    const tSaved = tb - ta;
-    const tPercent = tb > 0 ? ((tSaved / tb) * 100).toFixed(1) : 0;
-
-    const cSaved = cb - ca;
-    const cYear = cSaved * 12;
-
-    timeSaved.textContent = tSaved;
-    timePercent.textContent = tPercent;
-    costSaved.textContent = cSaved.toLocaleString("id-ID");
-    costYear.textContent = cYear.toLocaleString("id-ID");
-
-    updateChart(tb, ta, cb, ca);
-  }
-
-  timeBefore.addEventListener("input", calculate);
-  timeAfter.addEventListener("input", calculate);
-  costBefore.addEventListener("input", calculate);
-  costAfter.addEventListener("input", calculate);
-
-  // ================= CHART =================
-  const timeChart = new Chart(document.getElementById("timeChart"), {
-    type: "bar",
-    data: {
-      labels: ["Before", "After"],
-      datasets: [{
-        label: "Time (minutes)",
-        data: [0, 0],
-        backgroundColor: ["#e74c3c", "#27ae60"]
-      }]
-    },
-    options: { responsive: true }
-  });
-
-  const costChart = new Chart(document.getElementById("costChart"), {
-    type: "bar",
-    data: {
-      labels: ["Before", "After"],
-      datasets: [{
-        label: "Cost (Rp)",
-        data: [0, 0],
-        backgroundColor: ["#e74c3c", "#27ae60"]
-      }]
-    },
-    options: { responsive: true }
-  });
-
-  function updateChart(tb, ta, cb, ca) {
-    timeChart.data.datasets[0].data = [tb, ta];
-    costChart.data.datasets[0].data = [cb, ca];
-    timeChart.update();
-    costChart.update();
-  }
-
-});
-
-// ================= GLOBAL BUTTONS =================
-
-window.generatePDF = function() {
-  alert("PDF feature ready");
-};
-
-window.generatePPT = function() {
-  alert("PPT feature ready");
-};
-
-window.saveKaizen = async function() {
-
-  const newData = {
-    date: document.getElementById("kaizenDateInput").value,
-    section: document.getElementById("section").value,
-    title: document.getElementById("judulKaizen").value,
-    timeBefore: Number(document.getElementById("timeBefore").value),
-    timeAfter: Number(document.getElementById("timeAfter").value),
-    costBefore: Number(document.getElementById("costBefore").value),
-    costAfter: Number(document.getElementById("costAfter").value),
-    preparedBy: document.getElementById("preparedBy").value,
-    approvedBy: document.getElementById("approvedBy").value,
-    photoBefore: document.getElementById("previewBefore").src || "",
-    photoAfter: document.getElementById("previewAfter").src || ""
+  window.hapus = async function(id) {
+    if (!confirm("Hapus Kaizen?")) return;
+    await deleteKaizenById(id);
+    loadData();
   };
 
-  try {
-    await saveKaizenToFirebase(newData);
-    alert("Kaizen berhasil disimpan ke Firebase!");
-    window.location.href = "./dashboard.html";
-  } catch (error) {
-    console.error(error);
-    alert("Gagal menyimpan data!");
-  }
-};
-
-window.goDashboard = function () {
-  window.location.href = "./dashboard.html";
-};
+  loadData();
+});
