@@ -167,13 +167,13 @@ function drawChart(totalTime, totalCost) {
       },
       options: {
         responsive: true,
-        layout: { padding: { top: 20 } },// 🔥 kurangi jarak keatas kosong
+        layout: { padding: { top: 20 } },
         plugins: {
           title: {
             display: true,
             text: "Perbandingan Target vs Realisasi Waktu",
             font: { size: 18, weight: "bold" },
-            padding: { bottom: 50 } // 🔥 ini bikin naik dari bar
+            padding: { bottom: 50 }
           },
           legend: { position: "bottom" },
           datalabels: {
@@ -187,21 +187,23 @@ function drawChart(totalTime, totalCost) {
         },
         scales: {
           y: {
-           beginAtZero: true,
-  grace: "20%",
-  ticks: {
-    stepSize: 20   // 🔥 jarak antar angka 10 menit
-  },
-  title: {
-    display: true,
-    text: "Menit"
-       }
+            beginAtZero: true,
+            grace: "20%",
+            ticks: {
+              stepSize: 20
+            },
+            title: {
+              display: true,
+              text: "Menit"
+            }
+          }
+        }
       },
       plugins: [ChartDataLabels]
     }
   );
 
-  // ================= COST CHART (PERSENTASE) =================
+  // ================= COST CHART =================
   costChart = new Chart(
     document.getElementById("costChart"),
     {
@@ -224,13 +226,13 @@ function drawChart(totalTime, totalCost) {
       },
       options: {
         responsive: true,
-        layout: { padding: { top: 20 } },// 🔥 kurangi jarak keatas kosong
+        layout: { padding: { top: 20 } },
         plugins: {
           title: {
             display: true,
             text: "Persentase Capaian Cost terhadap Target",
             font: { size: 18, weight: "bold" },
-            padding: { bottom: 50 } // 🔥 ini bikin naik dari bar
+            padding: { bottom: 50 }
           },
           legend: { position: "bottom" },
           datalabels: {
@@ -257,20 +259,23 @@ function drawChart(totalTime, totalCost) {
         },
         scales: {
           y: {
-  beginAtZero: true,
-  max: 120,
-  ticks: {
-    stepSize: 20   // 🔥 0, 20, 40, 60, 80, 100
-  },
-  title: {
-    display: true,
-    text: "Persentase (%)"
-  }
-   },
+            beginAtZero: true,
+            max: 120,
+            ticks: {
+              stepSize: 20
+            },
+            title: {
+              display: true,
+              text: "Persentase (%)"
+            }
+          }
+        }
+      },
       plugins: [ChartDataLabels]
     }
   );
 }
+
 
 
 
