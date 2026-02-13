@@ -239,5 +239,67 @@ document.addEventListener("DOMContentLoaded", () => {
   filterMonth.onchange = render;
   filterYear.onchange  = render;
 
+// set default filter ke all supaya semua data tampil
+if (filterMonth) filterMonth.value = "all";
+if (filterYear) filterYear.value = "all";
+
   render();
 });
+// ===== BACKUP =====
+window.exportKaizenJSON = function () {
+
+  const data = localStorage.getItem("kaizenList") || "[]";
+
+  if (data === "[]") {
+    alert("Belum ada data untuk dibackup!");
+    return;
+  }
+
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kaizen-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+};
+
+
+// ===== RESTORE =====
+window.importKaizenJSON = function(event) {
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+
+      const importedData = JSON.parse(e.target.result);
+
+      if (!Array.isArray(importedData)) {
+        alert("Format JSON tidak valid!");
+        return;
+      }
+
+      localStorage.setItem("kaizenList", JSON.stringify(importedData));
+
+      alert("Data berhasil di-restore!");
+      location.reload();
+
+    } catch (err) {
+      console.error(err);
+      alert("Gagal membaca file JSON.");
+    }
+  };
+
+  reader.readAsText(file);
+
+  // reset input supaya bisa pilih file sama lagi
+  event.target.value = "";
+};
