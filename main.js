@@ -56,10 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           previewAfter.style.display = "block";
         }
 
-        calculate();
-      }
-
-    } catch (err) {
+       } catch (err) {
       console.error("Gagal load data edit:", err);
     }
   }
@@ -159,7 +156,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   timeAfter?.addEventListener("input", calculate);
   costBefore?.addEventListener("input", calculate);
   costAfter?.addEventListener("input", calculate);
-
+// Jalankan sekali setelah semua chart siap
+calculate();
 });
 
 
@@ -230,13 +228,19 @@ window.saveKaizen = async function() {
 
   try {
 
-    if (editId) {
-      await updateKaizenById(editId, newData);
-      alert("Kaizen berhasil diupdate!");
-    } else {
-      await saveKaizenToFirebase(newData);
-      alert("Kaizen berhasil disimpan!");
-    }
+   if (editId) {
+
+  const existing = await getKaizenById(editId);
+
+  if (!existing) {
+    alert("Data tidak ditemukan untuk diupdate!");
+    return;
+  }
+
+  await updateKaizenById(editId, newData);
+  alert("Kaizen berhasil diupdate!");
+}
+
 
     window.location.href = "./dashboard.html";
 
