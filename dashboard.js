@@ -30,7 +30,7 @@ if (targetCostInput) targetCostInput.value = targetCost;
   let timeChart, costChart;
 
   // ================= LOAD DATA =================
-  async function loadData() {
+ window.loadData = async function() {
     data = await getAllKaizens();
     initYearFilter();
     render();
