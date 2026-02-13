@@ -132,7 +132,7 @@ if (targetCostInput) targetCostInput.value = targetCost;
   };
 
   // ================= CHART =================
- function drawChart(totalTime, totalCost) {
+function drawChart(totalTime, totalCost) {
 
   const targetTime = Number(localStorage.getItem("targetTime")) || 0;
   const targetCost = Number(localStorage.getItem("targetCost")) || 0;
@@ -163,14 +163,29 @@ if (targetCostInput) targetCostInput.value = targetCost;
       },
       options: {
         responsive: true,
+        layout: {
+          padding: {
+            top: 20   // 🔥 Naikkan posisi title
+          }
+        },
         plugins: {
           title: {
             display: true,
             text: "Perbandingan Target vs Realisasi Waktu",
-            font: { size: 16, weight: "bold" }
+            font: { size: 18, weight: "bold" },
+            padding: {
+              bottom: 20
+            }
           },
           legend: {
             position: "bottom"
+          },
+          datalabels: {
+            anchor: "end",
+            align: "end",
+            font: { weight: "bold" },
+            color: "#000",
+            formatter: value => value
           }
         },
         scales: {
@@ -182,7 +197,8 @@ if (targetCostInput) targetCostInput.value = targetCost;
             }
           }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     }
   );
 
@@ -209,21 +225,30 @@ if (targetCostInput) targetCostInput.value = targetCost;
       },
       options: {
         responsive: true,
+        layout: {
+          padding: {
+            top: 20
+          }
+        },
         plugins: {
           title: {
             display: true,
             text: "Perbandingan Target vs Realisasi Cost",
-            font: { size: 16, weight: "bold" }
+            font: { size: 18, weight: "bold" },
+            padding: {
+              bottom: 20
+            }
           },
           legend: {
             position: "bottom"
           },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return "Rp " + context.raw.toLocaleString("id-ID");
-              }
-            }
+          datalabels: {
+            anchor: "end",
+            align: "end",
+            font: { weight: "bold" },
+            color: "#000",
+            formatter: value =>
+              "Rp " + value.toLocaleString("id-ID")
           }
         },
         scales: {
@@ -234,13 +259,13 @@ if (targetCostInput) targetCostInput.value = targetCost;
               text: "Rupiah"
             },
             ticks: {
-              callback: function(value) {
-                return value.toLocaleString("id-ID");
-              }
+              callback: value =>
+                value.toLocaleString("id-ID")
             }
           }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     }
   );
 }
