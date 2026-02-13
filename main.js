@@ -169,6 +169,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   costAfter?.addEventListener("input", calculate);
 
 });
+function compressImage(base64, maxSize = 800) {
+  return new Promise(resolve => {
+
+    const img = new Image();
+    img.src = base64;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const scale = maxSize / img.width;
+
+      canvas.width = maxSize;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      resolve(canvas.toDataURL("image/jpeg", 0.6));
+    };
+  });
+}
+let photoBeforeBase64 = previewBefore.src;
+let photoAfterBase64 = previewAfter.src;
+
+if (photoBeforeBase64.length > 1000000)
+  photoBeforeBase64 = await compressImage(photoBeforeBase64);
+
+if (photoAfterBase64.length > 1000000)
+  photoAfterBase64 = await compressImage(photoAfterBase64);
+
 window.saveKaizen = async function() {
 
   const dateValue =
