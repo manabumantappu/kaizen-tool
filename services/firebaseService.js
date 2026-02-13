@@ -51,3 +51,11 @@ export async function updateKaizenById(id, data) {
   const ref = doc(db, "kaizens", id);
   await updateDoc(ref, data);
 }
+import { getDoc } from 
+"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+export async function getKaizenById(id) {
+  const ref = doc(db, "kaizens", id);
+  const snapshot = await getDoc(ref);
+  return { id: snapshot.id, ...snapshot.data() };
+}
