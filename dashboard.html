@@ -63,11 +63,12 @@
 <tbody></tbody>
 </table>
 
-<!-- ===== CHART ===== -->
+<!-- ===== CHART SECTION ===== -->
 <h2>📊 Grafik Saving</h2>
 
-<div class="target-setting">
-  
+<div class="chart-section">
+
+  <!-- Chart -->
   <div class="chart-row">
     <div class="chart-box">
       <canvas id="timeChart" height="400"></canvas>
@@ -77,22 +78,23 @@
       <canvas id="costChart" height="400"></canvas>
     </div>
   </div>
-</div>
-  
-  <div>
-    <label>🎯 Target Waktu (Menit)</label><br>
-    <input type="number" id="targetTimeInput" style="padding:5px; width:120px;">
+
+  <!-- Target Setting -->
+  <div class="target-setting">
+    <div>
+      <label>🎯 Target Waktu (Menit)</label><br>
+      <input type="number" id="targetTimeInput">
+    </div>
+
+    <div>
+      <label>🎯 Target Cost (Rp)</label><br>
+      <input type="number" id="targetCostInput">
+    </div>
+
+    <button onclick="updateTarget()">Update Target</button>
   </div>
 
-  <div>
-    <label>🎯 Target Cost (Rp)</label><br>
-    <input type="number" id="targetCostInput" style="padding:5px; width:160px;">
-  </div>
-
-  <button onclick="updateTarget()">Update Target</button>
-
 </div>
-
 
 <!-- ===== FOOTER ===== -->
 <div class="footer">
@@ -135,8 +137,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script type="module" src="./dashboard.js"></script>
-
-
 
 </body>
 </html>
