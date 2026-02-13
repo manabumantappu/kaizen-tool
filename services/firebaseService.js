@@ -1,4 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+
 import {
   getFirestore,
   collection,
@@ -6,10 +8,13 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  serverTimestamp,
+  updateDoc,
+  getDoc,
   query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+  orderBy,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAp8eV7ImhbPiS3sJFBq_hj-ngijh1e3b8",
@@ -24,6 +29,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const kaizenRef = collection(db, "kaizens");
 
+// CREATE
 export async function saveKaizenToFirebase(data) {
   return await addDoc(kaizenRef, {
     ...data,
@@ -31,29 +37,28 @@ export async function saveKaizenToFirebase(data) {
   });
 }
 
+// READ ALL
 export async function getAllKaizens() {
   const q = query(kaizenRef, orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
+  return snapshot.docs.map(d => ({
+    id: d.id,
+    ...d.data()
   }));
 }
 
+// DELETE
 export async function deleteKaizenById(id) {
   return await deleteDoc(doc(db, "kaizens", id));
 }
 
-import { doc, updateDoc } from 
-"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
+// UPDATE
 export async function updateKaizenById(id, data) {
   const ref = doc(db, "kaizens", id);
   await updateDoc(ref, data);
 }
-import { getDoc } from 
-"https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
+// READ BY ID
 export async function getKaizenById(id) {
   const ref = doc(db, "kaizens", id);
   const snapshot = await getDoc(ref);
