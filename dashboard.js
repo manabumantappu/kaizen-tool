@@ -222,86 +222,100 @@ function drawChart(totalTime, totalCost) {
     }
   );
 
-  // ================= COST CHART =================
-  costChart = new Chart(
-    document.getElementById("costChart"),
-    {
-      type: "bar",
-      data: {
-        labels: ["Capaian Cost (%)"],
-        datasets: [
-          {
-            label: "Target",
-            data: [100],
-            backgroundColor: "#bdc3c7"
-          },
-          {
-            label: "Realisasi",
-            data: [percentCost],
-            backgroundColor:
-              percentCost >= 100 ? "#0a3d62" : "#e74c3c"
+  // ================= COST CHART (PRIMARY: RUPIAH) =================
+costChart = new Chart(
+  document.getElementById("costChart"),
+  {
+    type: "bar",
+    data: {
+      labels: ["Cost (Rp)"],
+      datasets: [
+        {
+          label: "Target",
+          data: [targetCost],
+          backgroundColor: "#bdc3c7"
+        },
+        {
+          label: "Realisasi",
+          data: [totalCost],
+          backgroundColor:
+            totalCost >= targetCost ? "#0a3d62" : "#e74c3c"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      layout: {
+        padding: {
+          top: 40,
+          bottom: 10
+        }
+      },
+
+      plugins: {
+        title: {
+          display: true,
+          text: "Perbandingan Target vs Realisasi Cost",
+          font: { size: 18, weight: "bold" },
+          padding: { bottom: 30 }
+        },
+
+        legend: {
+          position: "bottom"
+        },
+
+        datalabels: {
+          anchor: "end",
+          align: "top",
+          offset: 8,
+          font: { weight: "bold", size: 13 },
+          color: "#000",
+          formatter: value =>
+            "Rp " + value.toLocaleString("id-ID")
+        },
+
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+
+              if (context.dataset.label === "Realisasi") {
+                const percent = targetCost > 0
+                  ? ((totalCost / targetCost) * 100).toFixed(1)
+                  : 0;
+
+                return "Realisasi: Rp " +
+                  totalCost.toLocaleString("id-ID") +
+                  " (" + percent + "%)";
+              }
+
+              return "Target: Rp " +
+                targetCost.toLocaleString("id-ID");
+            }
           }
-        ]
+        }
       },
-     options: {
-  responsive: true,
-  maintainAspectRatio: false,   // 🔥 penting
 
-  layout: {
-    padding: {
-      top: 20,
-      bottom: 10
-    }
-  },
-
-  plugins: {
-    title: {
-      display: true,
-      text: "Persentase Capaian Cost terhadap Target",
-      font: { size: 18, weight: "bold" },
-      padding: { bottom: 50 }
-    },
-
-    legend: {
-      position: "bottom",
-      labels: {
-        boxWidth: 20,
-        padding: 15
+      scales: {
+        y: {
+          beginAtZero: true,
+          grace: "25%",
+          ticks: {
+            callback: function(value) {
+              return "Rp " + value.toLocaleString("id-ID");
+            }
+          },
+          title: {
+            display: true,
+            text: "Rupiah (Rp)"
+          }
+        }
       }
     },
-
-    datalabels: {
-      anchor: "end",
-      align: "top",
-      offset: 8,
-      font: { weight: "bold", size: 13 },
-      formatter: value => value + " %",
-      color: "#000"
-    }
-  },
-
-  scales: {
-    y: {
-      beginAtZero: true,
-      max: 120,
-      ticks: {
-        stepSize: 20,
-        padding: 8
-      },
-      title: {
-        display: true,
-        text: "Persentase (%)"
-      }
-    }
+    plugins: [ChartDataLabels]
   }
-},
-      plugins: [ChartDataLabels]
-    }
-  );
-}
-
-
-
+);
 
   // ================= UPDATE TARGET =================
   window.updateTarget = function() {
