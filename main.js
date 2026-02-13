@@ -1,3 +1,6 @@
+import { saveKaizenToFirebase } 
+from "./services/firebaseService.js";
+
 document.addEventListener("DOMContentLoaded", () => {
 
   // ================= ELEMENT =================
@@ -15,37 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const photoAfter = document.getElementById("photoAfter");
   const previewBefore = document.getElementById("previewBefore");
   const previewAfter = document.getElementById("previewAfter");
-
-  // ================= EDIT MODE =================
-  const editIndex = localStorage.getItem("editIndex");
-  const editIdx = editIndex !== null ? Number(editIndex) : null;
-
-  if (editIdx !== null) {
-    const data = JSON.parse(localStorage.getItem("kaizenList")) || [];
-    const item = data[editIdx];
-
-    if (item) {
-      document.getElementById("kaizenDateInput").value = item.date || "";
-      document.getElementById("section").value = item.section || "";
-      document.getElementById("judulKaizen").value = item.title || "";
-      timeBefore.value = item.timeBefore || 0;
-      timeAfter.value = item.timeAfter || 0;
-      costBefore.value = item.costBefore || 0;
-      costAfter.value = item.costAfter || 0;
-
-      if (item.photoBefore) {
-        previewBefore.src = item.photoBefore;
-        previewBefore.style.display = "block";
-      }
-
-      if (item.photoAfter) {
-        previewAfter.src = item.photoAfter;
-        previewAfter.style.display = "block";
-      }
-
-      calculate(); // update grafik saat edit
-    }
-  }
 
   // ================= FOTO PREVIEW =================
   function previewImage(input, preview) {
@@ -92,10 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   costAfter.addEventListener("input", calculate);
 
   // ================= CHART =================
-  const timeChartCtx = document.getElementById("timeChart");
-  const costChartCtx = document.getElementById("costChart");
-
-  const timeChart = new Chart(timeChartCtx, {
+  const timeChart = new Chart(document.getElementById("timeChart"), {
     type: "bar",
     data: {
       labels: ["Before", "After"],
@@ -105,13 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
         backgroundColor: ["#e74c3c", "#27ae60"]
       }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } }
-    }
+    options: { responsive: true }
   });
 
-  const costChart = new Chart(costChartCtx, {
+  const costChart = new Chart(document.getElementById("costChart"), {
     type: "bar",
     data: {
       labels: ["Before", "After"],
@@ -121,10 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         backgroundColor: ["#e74c3c", "#27ae60"]
       }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } }
-    }
+    options: { responsive: true }
   });
 
   function updateChart(tb, ta, cb, ca) {
@@ -139,14 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================= GLOBAL BUTTONS =================
 
 window.generatePDF = function() {
-  alert("PDF feature ready (integrate jsPDF logic here)");
+  alert("PDF feature ready");
 };
 
 window.generatePPT = function() {
-  alert("PPT feature ready (integrate PptxGenJS logic here)");
+  alert("PPT feature ready");
 };
 
-window.saveKaizen = function() {
+window.saveKaizen = async function() {
 
   const newData = {
     date: document.getElementById("kaizenDateInput").value,
@@ -162,25 +125,16 @@ window.saveKaizen = function() {
     photoAfter: document.getElementById("previewAfter").src || ""
   };
 
-  let kaizenList = JSON.parse(localStorage.getItem("kaizenList")) || [];
-
-  const editIndex = localStorage.getItem("editIndex");
-  const editIdx = editIndex !== null ? Number(editIndex) : null;
-
-  if (editIdx !== null) {
-    kaizenList[editIdx] = newData;
-    localStorage.removeItem("editIndex");
-    alert("Kaizen berhasil diupdate!");
-  } else {
-    kaizenList.push(newData);
-    alert("Kaizen berhasil disimpan!");
+  try {
+    await saveKaizenToFirebase(newData);
+    alert("Kaizen berhasil disimpan ke Firebase!");
+    window.location.href = "./dashboard.html";
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menyimpan data!");
   }
-
-  localStorage.setItem("kaizenList", JSON.stringify(kaizenList));
-
-  window.location.reload();
 };
 
 window.goDashboard = function () {
-  window.location.href = "dashboard.html";
+  window.location.href = "./dashboard.html";
 };
