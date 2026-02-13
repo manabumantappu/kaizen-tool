@@ -394,3 +394,53 @@ window.importKaizenJSON = function (event) {
   reader.readAsText(file);
   event.target.value = "";
 };
+window.generatePDF = async function () {
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const totalKaizen = document.getElementById("totalKaizen").innerText;
+  const totalTime = document.getElementById("totalTime").innerText;
+  const totalCost = document.getElementById("totalCost").innerText;
+
+  doc.setFontSize(18);
+  doc.text("KAIZEN REPORT", 20, 20);
+
+  doc.setFontSize(12);
+  doc.text("Total Kaizen: " + totalKaizen, 20, 40);
+  doc.text("Total Hemat Waktu: " + totalTime + " menit", 20, 50);
+  doc.text("Total Hemat Cost: Rp " + totalCost, 20, 60);
+
+  doc.save("Kaizen-Report.pdf");
+};
+window.generatePPT = async function () {
+
+  let ppt = new PptxGenJS();
+
+  const totalKaizen = document.getElementById("totalKaizen").innerText;
+  const totalTime = document.getElementById("totalTime").innerText;
+  const totalCost = document.getElementById("totalCost").innerText;
+
+  // Slide 1 - Summary
+  let slide1 = ppt.addSlide();
+  slide1.addText("KAIZEN REPORT", {
+    x: 1,
+    y: 1,
+    fontSize: 28,
+    bold: true
+  });
+
+  slide1.addText(
+    [
+      { text: "Total Kaizen: ", bold: true },
+      totalKaizen + "\n",
+      { text: "Total Hemat Waktu: ", bold: true },
+      totalTime + " menit\n",
+      { text: "Total Hemat Cost: ", bold: true },
+      "Rp " + totalCost
+    ],
+    { x: 1, y: 2.5, fontSize: 16 }
+  );
+
+  ppt.writeFile("Kaizen-Report.pptx");
+};
