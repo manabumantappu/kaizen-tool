@@ -221,8 +221,9 @@ window.saveKaizen = async function() {
     costAfter: Number(document.getElementById("costAfter").value) || 0,
     preparedBy: document.getElementById("preparedBy").value || "",
     approvedBy: document.getElementById("approvedBy").value || "",
-    photoBefore: document.getElementById("previewBefore").src || "",
-    photoAfter: document.getElementById("previewAfter").src || ""
+   photoBefore: compressImage(document.getElementById("previewBefore").src),
+   photoAfter: compressImage(document.getElementById("previewAfter").src)
+
   };
 
   try {
@@ -274,3 +275,14 @@ window.generatePPT = function () {
 window.goDashboard = function () {
   window.location.href = "./dashboard.html";
 };
+function compressImage(base64) {
+  if (!base64) return "";
+
+  // Batasi maksimal 900kb
+  if (base64.length > 900000) {
+    alert("Ukuran foto terlalu besar. Gunakan gambar lebih kecil!");
+    return "";
+  }
+
+  return base64;
+}
