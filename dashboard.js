@@ -265,29 +265,34 @@ window.importKaizenJSON = function(event) {
 
     try {
 
-      const text = e.target.result;
-      const importedData = JSON.parse(text);
+      const text = e.target.result.trim();
 
-      if (!Array.isArray(importedData)) {
-        alert("Format JSON tidak valid! Harus berupa array.");
+      if (!text.startsWith("[")) {
+        alert("File bukan format array JSON.");
         return;
       }
 
-      for (let item of importedData) {
+      const importedData = JSON.parse(text);
 
-        // Bersihkan field yang tidak perlu
+      if (!Array.isArray(importedData)) {
+        alert("Format JSON harus berupa array.");
+        return;
+      }
+
+      for (const item of importedData) {
+
         const cleanData = {
-          date: item.date || "",
-          section: item.section || "",
-          title: item.title || "",
+          date: item.date ?? "",
+          section: item.section ?? "",
+          title: item.title ?? "",
           timeBefore: Number(item.timeBefore) || 0,
           timeAfter: Number(item.timeAfter) || 0,
           costBefore: Number(item.costBefore) || 0,
           costAfter: Number(item.costAfter) || 0,
-          preparedBy: item.preparedBy || "",
-          approvedBy: item.approvedBy || "",
-          photoBefore: item.photoBefore || "",
-          photoAfter: item.photoAfter || ""
+          preparedBy: item.preparedBy ?? "",
+          approvedBy: item.approvedBy ?? "",
+          photoBefore: item.photoBefore ?? "",
+          photoAfter: item.photoAfter ?? ""
         };
 
         await saveKaizenToFirebase(cleanData);
@@ -297,12 +302,13 @@ window.importKaizenJSON = function(event) {
       loadData();
 
     } catch (err) {
-      console.error(err);
-      alert("File JSON rusak atau format salah.");
+      console.error("RESTORE ERROR:", err);
+      alert("Isi file JSON tidak sesuai format sistem.");
     }
   };
 
   reader.readAsText(file);
   event.target.value = "";
 };
+
 
