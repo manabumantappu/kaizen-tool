@@ -226,12 +226,24 @@ window.saveKaizen = async function() {
   try {
 
     if (editId) {
-      await updateKaizenById(editId, newData);
-      alert("Kaizen berhasil diupdate!");
-    } else {
-      await saveKaizenToFirebase(newData);
-      alert("Kaizen berhasil disimpan!");
-    }
+
+  const existing = await getKaizenById(editId);
+
+  if (!existing || !existing.id) {
+    alert("Data tidak ditemukan. Akan disimpan sebagai data baru.");
+    await saveKaizenToFirebase(newData);
+  } else {
+    await updateKaizenById(editId, newData);
+    alert("Kaizen berhasil diupdate!");
+  }
+
+} else {
+
+  await saveKaizenToFirebase(newData);
+  alert("Kaizen berhasil disimpan!");
+
+}
+
 
     window.location.href = "./dashboard.html";
 
