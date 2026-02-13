@@ -63,11 +63,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const m = filterMonth.value;
     const y = filterYear.value;
 
-    const filtered = data.filter(k => {
-      const d = new Date(k.date);
-      return (m === "all" || d.getMonth() + 1 == m) &&
-             (y === "all" || d.getFullYear() == y);
-    });
+  const filtered = data.filter(k => {
+
+  if (!k.date) return false;      // kalau date kosong → skip
+
+  const d = new Date(k.date);
+
+  if (isNaN(d)) return false;     // kalau date invalid → skip
+
+  return (m === "all" || d.getMonth() + 1 == m) &&
+         (y === "all" || d.getFullYear() == y);
+});
 
     tbody.innerHTML = "";
 
