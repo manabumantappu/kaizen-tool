@@ -137,10 +137,14 @@ function drawChart(totalTime, totalCost) {
   const targetTime = Number(localStorage.getItem("targetTime")) || 0;
   const targetCost = Number(localStorage.getItem("targetCost")) || 0;
 
+  const percentCost = targetCost > 0
+    ? ((totalCost / targetCost) * 100).toFixed(1)
+    : 0;
+
   if (timeChart) timeChart.destroy();
   if (costChart) costChart.destroy();
 
-  // ===== TIME CHART =====
+  // ================= TIME CHART =================
   timeChart = new Chart(
     document.getElementById("timeChart"),
     {
@@ -161,121 +165,111 @@ function drawChart(totalTime, totalCost) {
           }
         ]
       },
-     options: {
-  responsive: true,
-  layout: {
-    padding: {
-      top: 40   // 🔥 Tambah ruang atas
-    }
-  },
-  plugins: {
-    title: {
-      display: true,
-      text: "Perbandingan Target vs Realisasi Waktu",
-      font: { size: 18, weight: "bold" },
-      padding: {
-        top: 10,
-        bottom: 30   // 🔥 Tambah jarak title ke chart
-      }
-    },
-    legend: {
-      position: "bottom"
-    },
-    datalabels: {
-      anchor: "end",
-      align: "top",   // 🔥 Geser sedikit ke atas
-      offset: 5,      // 🔥 Jarak dari bar
-      font: { weight: "bold" },
-      color: "#000",
-      formatter: value => value
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      grace: "15%",   // 🔥 Tambah ruang di atas bar
-      title: {
-        display: true,
-        text: "Menit"
-      }
-    }
-  }
-},
-
+      options: {
+        responsive: true,
+        layout: { padding: { top: 40 } },
+        plugins: {
+          title: {
+            display: true,
+            text: "Perbandingan Target vs Realisasi Waktu",
+            font: { size: 18, weight: "bold" },
+            padding: { bottom: 30 }
+          },
+          legend: { position: "bottom" },
+          datalabels: {
+            anchor: "end",
+            align: "top",
+            offset: 5,
+            font: { weight: "bold" },
+            color: "#000",
+            formatter: value => value + " menit"
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grace: "15%",
+            title: {
+              display: true,
+              text: "Menit"
+            }
+          }
+        }
+      },
       plugins: [ChartDataLabels]
     }
   );
 
-  // ===== COST CHART =====
+  // ================= COST CHART (PERSENTASE) =================
   costChart = new Chart(
     document.getElementById("costChart"),
     {
       type: "bar",
       data: {
-        labels: ["Cost (Rp)"],
+        labels: ["Capaian Cost (%)"],
         datasets: [
           {
             label: "Target",
-            data: [targetCost],
+            data: [100],
             backgroundColor: "#bdc3c7"
           },
           {
             label: "Realisasi",
-            data: [totalCost],
+            data: [percentCost],
             backgroundColor:
-              totalCost >= targetCost ? "#0a3d62" : "#e74c3c"
+              percentCost >= 100 ? "#0a3d62" : "#e74c3c"
           }
         ]
       },
-     options: {
-  responsive: true,
-  layout: {
-    padding: {
-      top: 40
-    }
-  },
-  plugins: {
-    title: {
-      display: true,
-      text: "Perbandingan Target vs Realisasi Cost",
-      font: { size: 18, weight: "bold" },
-      padding: {
-        top: 10,
-        bottom: 30
-      }
-    },
-    legend: {
-      position: "bottom"
-    },
-    datalabels: {
-      anchor: "end",
-      align: "top",
-      offset: 5,
-      font: { weight: "bold" },
-      color: "#000",
-      formatter: value =>
-        "Rp " + value.toLocaleString("id-ID")
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      grace: "15%",   // 🔥 Tambah headroom
-      title: {
-        display: true,
-        text: "Rupiah"
+      options: {
+        responsive: true,
+        layout: { padding: { top: 40 } },
+        plugins: {
+          title: {
+            display: true,
+            text: "Persentase Capaian Cost terhadap Target",
+            font: { size: 18, weight: "bold" },
+            padding: { bottom: 30 }
+          },
+          legend: { position: "bottom" },
+          datalabels: {
+            anchor: "end",
+            align: "top",
+            offset: 5,
+            font: { weight: "bold" },
+            formatter: value => value + " %",
+            color: "#000"
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                if (context.dataset.label === "Realisasi") {
+                  return "Realisasi: " +
+                    totalCost.toLocaleString("id-ID") +
+                    " (" + percentCost + "%)";
+                }
+                return "Target: " +
+                  targetCost.toLocaleString("id-ID");
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 120,
+            title: {
+              display: true,
+              text: "Persentase (%)"
+            }
+          }
+        }
       },
-      ticks: {
-        callback: value =>
-          value.toLocaleString("id-ID")
-      }
-    }
-  }
-},
       plugins: [ChartDataLabels]
     }
   );
 }
+
 
 
   // ================= UPDATE TARGET =================
