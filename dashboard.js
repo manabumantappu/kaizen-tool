@@ -161,43 +161,47 @@ function drawChart(totalTime, totalCost) {
           }
         ]
       },
-      options: {
-        responsive: true,
-        layout: {
-          padding: {
-            top: 20   // 🔥 Naikkan posisi title
-          }
-        },
-        plugins: {
-          title: {
-            display: true,
-            text: "Perbandingan Target vs Realisasi Waktu",
-            font: { size: 18, weight: "bold" },
-            padding: {
-              bottom: 20
-            }
-          },
-          legend: {
-            position: "bottom"
-          },
-          datalabels: {
-            anchor: "end",
-            align: "end",
-            font: { weight: "bold" },
-            color: "#000",
-            formatter: value => value
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Menit"
-            }
-          }
-        }
-      },
+     options: {
+  responsive: true,
+  layout: {
+    padding: {
+      top: 40   // 🔥 Tambah ruang atas
+    }
+  },
+  plugins: {
+    title: {
+      display: true,
+      text: "Perbandingan Target vs Realisasi Waktu",
+      font: { size: 18, weight: "bold" },
+      padding: {
+        top: 10,
+        bottom: 30   // 🔥 Tambah jarak title ke chart
+      }
+    },
+    legend: {
+      position: "bottom"
+    },
+    datalabels: {
+      anchor: "end",
+      align: "top",   // 🔥 Geser sedikit ke atas
+      offset: 5,      // 🔥 Jarak dari bar
+      font: { weight: "bold" },
+      color: "#000",
+      formatter: value => value
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      grace: "15%",   // 🔥 Tambah ruang di atas bar
+      title: {
+        display: true,
+        text: "Menit"
+      }
+    }
+  }
+},
+
       plugins: [ChartDataLabels]
     }
   );
@@ -223,48 +227,51 @@ function drawChart(totalTime, totalCost) {
           }
         ]
       },
-      options: {
-        responsive: true,
-        layout: {
-          padding: {
-            top: 20
-          }
-        },
-        plugins: {
-          title: {
-            display: true,
-            text: "Perbandingan Target vs Realisasi Cost",
-            font: { size: 18, weight: "bold" },
-            padding: {
-              bottom: 20
-            }
-          },
-          legend: {
-            position: "bottom"
-          },
-          datalabels: {
-            anchor: "end",
-            align: "end",
-            font: { weight: "bold" },
-            color: "#000",
-            formatter: value =>
-              "Rp " + value.toLocaleString("id-ID")
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Rupiah"
-            },
-            ticks: {
-              callback: value =>
-                value.toLocaleString("id-ID")
-            }
-          }
-        }
+     options: {
+  responsive: true,
+  layout: {
+    padding: {
+      top: 40
+    }
+  },
+  plugins: {
+    title: {
+      display: true,
+      text: "Perbandingan Target vs Realisasi Cost",
+      font: { size: 18, weight: "bold" },
+      padding: {
+        top: 10,
+        bottom: 30
+      }
+    },
+    legend: {
+      position: "bottom"
+    },
+    datalabels: {
+      anchor: "end",
+      align: "top",
+      offset: 5,
+      font: { weight: "bold" },
+      color: "#000",
+      formatter: value =>
+        "Rp " + value.toLocaleString("id-ID")
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      grace: "15%",   // 🔥 Tambah headroom
+      title: {
+        display: true,
+        text: "Rupiah"
       },
+      ticks: {
+        callback: value =>
+          value.toLocaleString("id-ID")
+      }
+    }
+  }
+},
       plugins: [ChartDataLabels]
     }
   );
