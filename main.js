@@ -6,7 +6,7 @@ import {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // ================= SAFE DATE DASH =================
+  // ================= DATE DASH =================
   const dateDashEl = document.getElementById("dateDash");
   if (dateDashEl) {
     dateDashEl.innerText =
@@ -55,9 +55,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           previewAfter.src = data.photoAfter;
           previewAfter.style.display = "block";
         }
-
-       } catch (err) {
-      console.error("Gagal load data edit:", err);
+      }
+    } catch (err) {
+      console.error("Gagal load edit:", err);
     }
   }
 
@@ -129,13 +129,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ================= CALCULATE =================
   function calculate() {
-
-    const tb = parseFloat(timeBefore.value) || 0;
-    const ta = parseFloat(timeAfter.value) || 0;
-    const cb = parseFloat(costBefore.value) || 0;
-    const ca = parseFloat(costAfter.value) || 0;
+    const tb = parseFloat(timeBefore?.value) || 0;
+    const ta = parseFloat(timeAfter?.value) || 0;
+    const cb = parseFloat(costBefore?.value) || 0;
+    const ca = parseFloat(costAfter?.value) || 0;
 
     const tSaved = tb - ta;
     const tPercent = tb > 0 ? ((tSaved / tb) * 100).toFixed(1) : 0;
@@ -156,8 +154,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   timeAfter?.addEventListener("input", calculate);
   costBefore?.addEventListener("input", calculate);
   costAfter?.addEventListener("input", calculate);
-// Jalankan sekali setelah semua chart siap
-calculate();
+
+  calculate();
 });
 
 
@@ -165,7 +163,6 @@ calculate();
 async function compressImage(base64) {
 
   if (!base64) return "";
-
   if (base64.length < 900000) return base64;
 
   return new Promise(resolve => {
@@ -228,19 +225,13 @@ window.saveKaizen = async function() {
 
   try {
 
-   if (editId) {
-
-  const existing = await getKaizenById(editId);
-
-  if (!existing) {
-    alert("Data tidak ditemukan untuk diupdate!");
-    return;
-  }
-
-  await updateKaizenById(editId, newData);
-  alert("Kaizen berhasil diupdate!");
-}
-
+    if (editId) {
+      await updateKaizenById(editId, newData);
+      alert("Kaizen berhasil diupdate!");
+    } else {
+      await saveKaizenToFirebase(newData);
+      alert("Kaizen berhasil disimpan!");
+    }
 
     window.location.href = "./dashboard.html";
 
@@ -254,6 +245,11 @@ window.saveKaizen = async function() {
 // ================= GENERATE PDF =================
 window.generatePDF = function () {
 
+  if (!window.jspdf) {
+    alert("Library PDF belum dimuat!");
+    return;
+  }
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
@@ -266,6 +262,11 @@ window.generatePDF = function () {
 
 // ================= GENERATE PPT =================
 window.generatePPT = function () {
+
+  if (!window.PptxGenJS) {
+    alert("Library PPT belum dimuat!");
+    return;
+  }
 
   let ppt = new PptxGenJS();
   let slide = ppt.addSlide();
