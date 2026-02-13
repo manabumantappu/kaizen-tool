@@ -34,13 +34,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ================= EDIT MODE =================
   if (editId) {
-
     try {
-
       const data = await getKaizenById(editId);
 
       if (data) {
-
         document.getElementById("kaizenDateInput").value = data.date || "";
         document.getElementById("section").value = data.section || "";
         document.getElementById("judulKaizen").value = data.title || "";
@@ -59,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           previewAfter.style.display = "block";
         }
 
-        calculate(); // update hasil saat edit
+        calculate();
       }
 
     } catch (err) {
@@ -69,11 +66,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ================= PREVIEW FOTO =================
   function previewImage(input, preview) {
-
     if (!input) return;
 
     input.addEventListener("change", () => {
-
       const file = input.files[0];
       if (!file) return;
 
@@ -82,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         preview.src = e.target.result;
         preview.style.display = "block";
       };
-
       reader.readAsDataURL(file);
     });
   }
@@ -128,12 +122,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function updateChart(tb, ta, cb, ca) {
-
     if (timeChart) {
       timeChart.data.datasets[0].data = [tb, ta];
       timeChart.update();
     }
-
     if (costChart) {
       costChart.data.datasets[0].data = [cb, ca];
       costChart.update();
@@ -155,10 +147,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (timeSaved) timeSaved.textContent = tSaved;
     if (timePercent) timePercent.textContent = tPercent;
-    if (costSaved) costSaved.textContent =
-      cSaved.toLocaleString("id-ID");
-    if (costYear) costYear.textContent =
-      cYear.toLocaleString("id-ID");
+    if (costSaved)
+      costSaved.textContent = cSaved.toLocaleString("id-ID");
+    if (costYear)
+      costYear.textContent = cYear.toLocaleString("id-ID");
 
     updateChart(tb, ta, cb, ca);
   }
@@ -169,17 +161,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   costAfter?.addEventListener("input", calculate);
 
 });
-function compressImage(base64, maxSize = 800) {
+
+
+// ================= COMPRESS IMAGE =================
+async function compressImage(base64) {
+
+  if (!base64) return "";
+
+  if (base64.length < 900000) return base64;
+
   return new Promise(resolve => {
 
     const img = new Image();
     img.src = base64;
 
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const scale = maxSize / img.width;
 
-      canvas.width = maxSize;
+      const canvas = document.createElement("canvas");
+
+      const maxWidth = 1000;
+      const scale = maxWidth / img.width;
+
+      canvas.width = maxWidth;
       canvas.height = img.height * scale;
 
       const ctx = canvas.getContext("2d");
@@ -189,15 +192,9 @@ function compressImage(base64, maxSize = 800) {
     };
   });
 }
-let photoBeforeBase64 = previewBefore.src;
-let photoAfterBase64 = previewAfter.src;
 
-if (photoBeforeBase64.length > 1000000)
-  photoBeforeBase64 = await compressImage(photoBeforeBase64);
 
-if (photoAfterBase64.length > 1000000)
-  photoAfterBase64 = await compressImage(photoAfterBase64);
-
+// ================= SAVE =================
 window.saveKaizen = async function() {
 
   const dateValue =
@@ -211,6 +208,12 @@ window.saveKaizen = async function() {
   const urlParams = new URLSearchParams(window.location.search);
   const editId = urlParams.get("id");
 
+  const photoBeforeCompressed =
+    await compressImage(document.getElementById("previewBefore").src);
+
+  const photoAfterCompressed =
+    await compressImage(document.getElementById("previewAfter").src);
+
   const newData = {
     date: dateValue,
     section: document.getElementById("section").value,
@@ -221,9 +224,8 @@ window.saveKaizen = async function() {
     costAfter: Number(document.getElementById("costAfter").value) || 0,
     preparedBy: document.getElementById("preparedBy").value || "",
     approvedBy: document.getElementById("approvedBy").value || "",
-   photoBefore: compressImage(document.getElementById("previewBefore").src),
-   photoAfter: compressImage(document.getElementById("previewAfter").src)
-
+    photoBefore: photoBeforeCompressed,
+    photoAfter: photoAfterCompressed
   };
 
   try {
@@ -243,6 +245,8 @@ window.saveKaizen = async function() {
     alert("Gagal menyimpan data!");
   }
 };
+
+
 // ================= GENERATE PDF =================
 window.generatePDF = function () {
 
@@ -254,6 +258,7 @@ window.generatePDF = function () {
 
   doc.save("Kaizen-Report.pdf");
 };
+
 
 // ================= GENERATE PPT =================
 window.generatePPT = function () {
@@ -271,18 +276,8 @@ window.generatePPT = function () {
   ppt.writeFile("Kaizen-Report.pptx");
 };
 
+
 // ================= GO DASHBOARD =================
 window.goDashboard = function () {
   window.location.href = "./dashboard.html";
 };
-function compressImage(base64) {
-  if (!base64) return "";
-
-  // Batasi maksimal 900kb
-  if (base64.length > 900000) {
-    alert("Ukuran foto terlalu besar. Gunakan gambar lebih kecil!");
-    return "";
-  }
-
-  return base64;
-}
