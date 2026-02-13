@@ -264,3 +264,12 @@ td {
   gap: 20px;
   align-items: center;
 }
+.chart-section {
+  margin-top: 40px;
+}
+.chart-box {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+}
