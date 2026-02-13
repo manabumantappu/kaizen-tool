@@ -22,7 +22,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const kaizenRef = collection(db, "kaizens");
 
 export async function saveKaizenToFirebase(data) {
@@ -35,7 +34,6 @@ export async function saveKaizenToFirebase(data) {
 export async function getAllKaizens() {
   const q = query(kaizenRef, orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-
   return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
