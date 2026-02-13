@@ -166,39 +166,58 @@ function drawChart(totalTime, totalCost) {
         ]
       },
       options: {
-        responsive: true,
-        layout: { padding: { top: 20 } },
-        plugins: {
-          title: {
-            display: true,
-            text: "Perbandingan Target vs Realisasi Waktu",
-            font: { size: 18, weight: "bold" },
-            padding: { bottom: 50 }
-          },
-          legend: { position: "bottom" },
-          datalabels: {
-            anchor: "end",
-            align: "top",
-            offset: 5,
-            font: { weight: "bold" },
-            color: "#000",
-            formatter: value => value + " menit"
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grace: "20%",
-            ticks: {
-              stepSize: 20
-            },
-            title: {
-              display: true,
-              text: "Menit"
-            }
-          }
-        }
+  responsive: true,
+  maintainAspectRatio: false,   // 🔥 penting
+
+  layout: {
+    padding: {
+      top: 40,
+      bottom: 10
+    }
+  },
+
+  plugins: {
+    title: {
+      display: true,
+      text: "Perbandingan Target vs Realisasi Waktu",
+      font: { size: 18, weight: "bold" },
+      padding: { bottom: 30 }
+    },
+
+    legend: {
+      position: "bottom",
+      labels: {
+        boxWidth: 20,
+        padding: 15
+      }
+    },
+
+    datalabels: {
+      anchor: "end",
+      align: "top",
+      offset: 8,
+      font: { weight: "bold", size: 13 },
+      color: "#000",
+      formatter: value => value + " menit"
+    }
+  },
+
+  scales: {
+    y: {
+      beginAtZero: true,
+      grace: "25%",
+      ticks: {
+        stepSize: 20,
+        padding: 8
       },
+      title: {
+        display: true,
+        text: "Menit",
+        padding: { bottom: 10 }
+      }
+    }
+  }
+},
       plugins: [ChartDataLabels]
     }
   );
@@ -224,53 +243,58 @@ function drawChart(totalTime, totalCost) {
           }
         ]
       },
-      options: {
-        responsive: true,
-        layout: { padding: { top: 20 } },
-        plugins: {
-          title: {
-            display: true,
-            text: "Persentase Capaian Cost terhadap Target",
-            font: { size: 18, weight: "bold" },
-            padding: { bottom: 50 }
-          },
-          legend: { position: "bottom" },
-          datalabels: {
-            anchor: "end",
-            align: "top",
-            offset: 5,
-            font: { weight: "bold" },
-            formatter: value => value + " %",
-            color: "#000"
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                if (context.dataset.label === "Realisasi") {
-                  return "Realisasi: " +
-                    totalCost.toLocaleString("id-ID") +
-                    " (" + percentCost + "%)";
-                }
-                return "Target: " +
-                  targetCost.toLocaleString("id-ID");
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 120,
-            ticks: {
-              stepSize: 20
-            },
-            title: {
-              display: true,
-              text: "Persentase (%)"
-            }
-          }
-        }
+     options: {
+  responsive: true,
+  maintainAspectRatio: false,   // 🔥 penting
+
+  layout: {
+    padding: {
+      top: 40,
+      bottom: 10
+    }
+  },
+
+  plugins: {
+    title: {
+      display: true,
+      text: "Persentase Capaian Cost terhadap Target",
+      font: { size: 18, weight: "bold" },
+      padding: { bottom: 30 }
+    },
+
+    legend: {
+      position: "bottom",
+      labels: {
+        boxWidth: 20,
+        padding: 15
+      }
+    },
+
+    datalabels: {
+      anchor: "end",
+      align: "top",
+      offset: 8,
+      font: { weight: "bold", size: 13 },
+      formatter: value => value + " %",
+      color: "#000"
+    }
+  },
+
+  scales: {
+    y: {
+      beginAtZero: true,
+      max: 120,
+      ticks: {
+        stepSize: 20,
+        padding: 8
       },
+      title: {
+        display: true,
+        text: "Persentase (%)"
+      }
+    }
+  }
+},
       plugins: [ChartDataLabels]
     }
   );
