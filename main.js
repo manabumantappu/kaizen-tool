@@ -169,3 +169,47 @@ document.addEventListener("DOMContentLoaded", async () => {
   costAfter?.addEventListener("input", calculate);
 
 });
+window.saveKaizen = async function() {
+
+  const dateValue =
+    document.getElementById("kaizenDateInput").value;
+
+  if (!dateValue) {
+    alert("Tanggal wajib diisi!");
+    return;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get("id");
+
+  const newData = {
+    date: dateValue,
+    section: document.getElementById("section").value,
+    title: document.getElementById("judulKaizen").value,
+    timeBefore: Number(document.getElementById("timeBefore").value) || 0,
+    timeAfter: Number(document.getElementById("timeAfter").value) || 0,
+    costBefore: Number(document.getElementById("costBefore").value) || 0,
+    costAfter: Number(document.getElementById("costAfter").value) || 0,
+    preparedBy: document.getElementById("preparedBy").value || "",
+    approvedBy: document.getElementById("approvedBy").value || "",
+    photoBefore: document.getElementById("previewBefore").src || "",
+    photoAfter: document.getElementById("previewAfter").src || ""
+  };
+
+  try {
+
+    if (editId) {
+      await updateKaizenById(editId, newData);
+      alert("Kaizen berhasil diupdate!");
+    } else {
+      await saveKaizenToFirebase(newData);
+      alert("Kaizen berhasil disimpan!");
+    }
+
+    window.location.href = "./dashboard.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menyimpan data!");
+  }
+};
