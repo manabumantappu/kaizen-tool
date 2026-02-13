@@ -133,12 +133,17 @@ window.editKaizen = function(id) {
 };
 
   // ================= SHOW PHOTO =================
-  window.showPhoto = function(id) {
-    const item = data.find(d => d.id === id);
-    modalBefore.src = item.photoBefore || "";
-    modalAfter.src = item.photoAfter || "";
-    modal.style.display = "flex";
-  };
+ window.showPhoto = function(id) {
+
+  const item = data.find(d => d.id === id);
+
+  if (!item) return;
+
+  modalBefore.src = item.photoBefore || "";
+  modalAfter.src = item.photoAfter || "";
+  modal.style.display = "flex";
+};
+
 
   window.closeModal = function() {
     modal.style.display = "none";
@@ -299,14 +304,20 @@ window.editKaizen = function(id) {
   }
 
   function formatDate(d) {
-    const date = new Date(d);
-    const day =
-      String(date.getDate()).padStart(2, "0");
-    const month =
-      String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
+
+  if (!d) return "-";
+
+  const date = new Date(d);
+
+  if (isNaN(date)) return "-";
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
 
   filterMonth.onchange = render;
   filterYear.onchange = render;
