@@ -213,3 +213,35 @@ window.saveKaizen = async function() {
     alert("Gagal menyimpan data!");
   }
 };
+// ================= GENERATE PDF =================
+window.generatePDF = function () {
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("KAIZEN REPORT", 20, 20);
+
+  doc.save("Kaizen-Report.pdf");
+};
+
+// ================= GENERATE PPT =================
+window.generatePPT = function () {
+
+  let ppt = new PptxGenJS();
+  let slide = ppt.addSlide();
+
+  slide.addText("KAIZEN REPORT", {
+    x: 1,
+    y: 1,
+    fontSize: 28,
+    bold: true
+  });
+
+  ppt.writeFile("Kaizen-Report.pptx");
+};
+
+// ================= GO DASHBOARD =================
+window.goDashboard = function () {
+  window.location.href = "./dashboard.html";
+};
