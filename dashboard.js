@@ -192,8 +192,21 @@ if (targetCostInput) targetCostInput.value = targetCost;
 
   // ================= UPDATE TARGET =================
   window.updateTarget = function() {
-    render();
-  };
+
+  const newTargetTime = Number(targetTimeInput.value);
+  const newTargetCost = Number(targetCostInput.value);
+
+  if (newTargetTime < 0 || newTargetCost < 0) {
+    alert("Target tidak valid!");
+    return;
+  }
+
+  localStorage.setItem("targetTime", newTargetTime);
+  localStorage.setItem("targetCost", newTargetCost);
+
+  render();
+};
+
 
   // ================= UTIL =================
   function fmt(n) {
