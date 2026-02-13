@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <td>Rp ${fmt(costSaved)}</td>
           <td>
             <button onclick="showPhoto('${k.id}')">📷</button>
+            <button onclick="editKaizen('${k.id}')">✏️</button>
             <button onclick="hapus('${k.id}')">🗑️</button>
           </td>
         </tr>
@@ -121,6 +122,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await deleteKaizenById(id);
     loadData();
   };
+window.editKaizen = function(id) {
+  window.location.href = `index.html?id=${id}`;
+};
 
   // ================= SHOW PHOTO =================
   window.showPhoto = function(id) {
