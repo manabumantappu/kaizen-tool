@@ -167,13 +167,13 @@ function drawChart(totalTime, totalCost) {
       },
       options: {
         responsive: true,
-        layout: { padding: { top: 40 } },
+        layout: { padding: { top: 20 } },
         plugins: {
           title: {
             display: true,
             text: "Perbandingan Target vs Realisasi Waktu",
             font: { size: 18, weight: "bold" },
-            padding: { bottom: 30 }
+            padding: { bottom: 50 }
           },
           legend: { position: "bottom" },
           datalabels: {
@@ -223,13 +223,13 @@ function drawChart(totalTime, totalCost) {
       },
       options: {
         responsive: true,
-        layout: { padding: { top: 40 } },
+        layout: { padding: { top: 20 } },
         plugins: {
           title: {
             display: true,
             text: "Persentase Capaian Cost terhadap Target",
             font: { size: 18, weight: "bold" },
-            padding: { bottom: 30 }
+            padding: { bottom: 50 }
           },
           legend: { position: "bottom" },
           datalabels: {
