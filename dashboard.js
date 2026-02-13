@@ -13,8 +13,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const totalTimeEl = document.getElementById("totalTime");
   const totalCostEl = document.getElementById("totalCost");
 
-  const targetTimeInput = document.getElementById("targetTimeInput");
-  const targetCostInput = document.getElementById("targetCostInput");
+const targetTimeInput = document.getElementById("targetTimeInput");
+const targetCostInput = document.getElementById("targetCostInput");
+
+let targetTime = Number(localStorage.getItem("targetTime")) || 0;
+let targetCost = Number(localStorage.getItem("targetCost")) || 0;
+
+if (targetTimeInput) targetTimeInput.value = targetTime;
+if (targetCostInput) targetCostInput.value = targetCost;
 
   const modal = document.getElementById("photoModal");
   const modalBefore = document.getElementById("modalBefore");
@@ -126,68 +132,63 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // ================= CHART =================
-  function drawChart(totalTime, totalCost) {
+ function drawChart(totalTime, totalCost) {
 
-    const targetTime = Number(targetTimeInput.value) || 0;
-    const targetCost = Number(targetCostInput.value) || 0;
+  targetTime = Number(localStorage.getItem("targetTime")) || 0;
+  targetCost = Number(localStorage.getItem("targetCost")) || 0;
 
-    if (timeChart) timeChart.destroy();
-    if (costChart) costChart.destroy();
+  if (timeChart) timeChart.destroy();
+  if (costChart) costChart.destroy();
 
-    // ===== TIME =====
-    timeChart = new Chart(
-      document.getElementById("timeChart"),
-      {
-        type: "bar",
-        data: {
-          labels: ["Waktu"],
-          datasets: [
-            {
-              label: "Target",
-              data: [targetTime],
-              backgroundColor: "#bdc3c7"
-            },
-            {
-              label: "Realisasi",
-              data: [totalTime],
-              backgroundColor: "#27ae60"
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
-      }
-    );
+  timeChart = new Chart(
+    document.getElementById("timeChart"),
+    {
+      type: "bar",
+      data: {
+        labels: ["Waktu"],
+        datasets: [
+          {
+            label: "Target",
+            data: [targetTime],
+            backgroundColor: "#bdc3c7"
+          },
+          {
+            label: "Realisasi",
+            data: [totalTime],
+            backgroundColor:
+              totalTime >= targetTime ? "#27ae60" : "#e74c3c"
+          }
+        ]
+      },
+      options: { responsive: true }
+    }
+  );
 
-    // ===== COST =====
-    costChart = new Chart(
-      document.getElementById("costChart"),
-      {
-        type: "bar",
-        data: {
-          labels: ["Cost"],
-          datasets: [
-            {
-              label: "Target",
-              data: [targetCost],
-              backgroundColor: "#bdc3c7"
-            },
-            {
-              label: "Realisasi",
-              data: [totalCost],
-              backgroundColor: "#0a3d62"
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true } }
-        }
-      }
-    );
-  }
+  costChart = new Chart(
+    document.getElementById("costChart"),
+    {
+      type: "bar",
+      data: {
+        labels: ["Cost"],
+        datasets: [
+          {
+            label: "Target",
+            data: [targetCost],
+            backgroundColor: "#bdc3c7"
+          },
+          {
+            label: "Realisasi",
+            data: [totalCost],
+            backgroundColor:
+              totalCost >= targetCost ? "#0a3d62" : "#e74c3c"
+          }
+        ]
+      },
+      options: { responsive: true }
+    }
+  );
+}
+
 
   // ================= UPDATE TARGET =================
   window.updateTarget = function() {
