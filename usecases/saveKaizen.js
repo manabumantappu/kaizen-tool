@@ -1,13 +1,28 @@
-import { saveKaizenToFirebase } 
-from "../services/firebaseService.js";
+import {
+  saveKaizenToFirebase,
+  updateKaizenById
+} from "../services/firebaseService.js";
 
 export async function saveKaizen(data) {
+
   try {
-    await saveKaizenToFirebase(data);
-    alert("Kaizen berhasil disimpan!");
+
+    // cek apakah mode edit
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get("id");
+
+    if (editId) {
+      await updateKaizenById(editId, data);
+      alert("Kaizen berhasil diupdate!");
+    } else {
+      await saveKaizenToFirebase(data);
+      alert("Kaizen berhasil disimpan!");
+    }
+
     window.location.href = "./dashboard.html";
+
   } catch (error) {
-    console.error(error);
+    console.error("SAVE ERROR:", error);
     alert("Gagal menyimpan data!");
   }
 }
