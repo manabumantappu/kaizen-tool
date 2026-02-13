@@ -22,13 +22,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalAfter = document.getElementById("modalAfter");
 
   let data = [];
-  let timeChart, costChart;
-
-  let targetTime = Number(localStorage.getItem("targetTime")) || 0;
-  let targetCost = Number(localStorage.getItem("targetCost")) || 0;
-
-  if (targetTimeInput) targetTimeInput.value = targetTime;
-  if (targetCostInput) targetCostInput.value = targetCost;
+  let timeChart = null;
+  let costChart = null;
 
   // ================= LOAD DATA =================
   async function loadData() {
@@ -39,15 +34,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.loadData = loadData;
 
-  // ================= INIT YEAR FILTER =================
+  // ================= INIT YEAR =================
   function initYearFilter() {
 
     const years = [...new Set(
-      data.map(k => new Date(k.date).getFullYear())
+      data
+        .filter(k => k.date)
+        .map(k => new Date(k.date).getFullYear())
     )];
 
-    filterYear.innerHTML =
-      `<option value="all">Semua Tahun</option>`;
+    filterYear.innerHTML = `<option value="all">Semua Tahun</option>`;
 
     years.forEach(y => {
       const opt = document.createElement("option");
@@ -63,17 +59,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const m = filterMonth.value;
     const y = filterYear.value;
 
-  const filtered = data.filter(k => {
+    const filtered = data.filter(k => {
 
-  if (!k.date) return false;      // kalau date kosong → skip
+      if (!k.date) return false;
 
-  const d = new Date(k.date);
+      const d = new Date(k.date);
+      if (isNaN(d)) return false;
 
-  if (isNaN(d)) return false;     // kalau date invalid → skip
-
-  return (m === "all" || d.getMonth() + 1 == m) &&
-         (y === "all" || d.getFullYear() == y);
-});
+      return (m === "all" || d.getMonth() + 1 == m) &&
+             (y === "all" || d.getFullYear() == y);
+    });
 
     tbody.innerHTML = "";
 
@@ -128,22 +123,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     await deleteKaizenById(id);
     loadData();
   };
-window.editKaizen = function(id) {
-  window.location.href = `index.html?id=${id}`;
-};
+
+  window.editKaizen = function(id) {
+    window.location.href = `index.html?id=${id}`;
+  };
 
   // ================= SHOW PHOTO =================
- window.showPhoto = function(id) {
+  window.showPhoto = function(id) {
 
-  const item = data.find(d => d.id === id);
+    const item = data.find(d => d.id === id);
+    if (!item) return;
 
-  if (!item) return;
-
-  modalBefore.src = item.photoBefore || "";
-  modalAfter.src = item.photoAfter || "";
-  modal.style.display = "flex";
-};
-
+    modalBefore.src = item.photoBefore || "";
+    modalAfter.src = item.photoAfter || "";
+    modal.style.display = "flex";
+  };
 
   window.closeModal = function() {
     modal.style.display = "none";
@@ -208,8 +202,7 @@ window.editKaizen = function(id) {
             title: {
               display: true,
               text: "Perbandingan Target vs Realisasi Waktu",
-              font: { size: 18, weight: "bold" },
-              padding: { bottom: 40 }
+              font: { size: 18, weight: "bold" }
             },
             legend: { position: "bottom" },
             datalabels: {
@@ -265,8 +258,7 @@ window.editKaizen = function(id) {
             title: {
               display: true,
               text: "Perbandingan Target vs Realisasi Cost",
-              font: { size: 18, weight: "bold" },
-              padding: { bottom: 40 }
+              font: { size: 18, weight: "bold" }
             },
             legend: { position: "bottom" },
             datalabels: {
@@ -299,104 +291,18 @@ window.editKaizen = function(id) {
 
   // ================= UTIL =================
   function fmt(n) {
-    return (Number(n) || 0)
-      .toLocaleString("id-ID");
+    return (Number(n) || 0).toLocaleString("id-ID");
   }
 
   function formatDate(d) {
-
-  if (!d) return "-";
-
-  const date = new Date(d);
-
-  if (isNaN(date)) return "-";
-
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
-}
-
+    if (!d) return "-";
+    const date = new Date(d);
+    if (isNaN(date)) return "-";
+    return date.toLocaleDateString("id-ID");
+  }
 
   filterMonth.onchange = render;
   filterYear.onchange = render;
 
   loadData();
 });
-
-// ================= BACKUP =================
-window.exportKaizenJSON = async function () {
-
-  const allData = await getAllKaizens();
-
-  if (!allData.length) {
-    alert("Tidak ada data untuk dibackup!");
-    return;
-  }
-
-  const blob = new Blob(
-    [JSON.stringify(allData, null, 2)],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "kaizen-backup.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  URL.revokeObjectURL(url);
-};
-
-// ================= RESTORE =================
-window.importKaizenJSON = function (event) {
-
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = async function (e) {
-
-    try {
-
-      const importedData = JSON.parse(e.target.result);
-      const dataArray = Array.isArray(importedData)
-        ? importedData
-        : [importedData];
-
-      for (const item of dataArray) {
-
-        const cleanData = {
-          date: item.date || "",
-          section: item.section || "",
-          title: item.title || "",
-          timeBefore: Number(item.timeBefore) || 0,
-          timeAfter: Number(item.timeAfter) || 0,
-          costBefore: Number(item.costBefore) || 0,
-          costAfter: Number(item.costAfter) || 0,
-          preparedBy: item.preparedBy || "",
-          approvedBy: item.approvedBy || "",
-          photoBefore: item.photoBefore || "",
-          photoAfter: item.photoAfter || ""
-        };
-
-        await saveKaizenToFirebase(cleanData);
-      }
-
-      alert("Restore berhasil!");
-      window.loadData();
-
-    } catch (err) {
-      console.error("RESTORE ERROR:", err);
-      alert("File JSON tidak bisa diproses.");
-    }
-  };
-
-  reader.readAsText(file);
-  event.target.value = "";
-};
