@@ -182,5 +182,5 @@ window.saveKaizen = function() {
 };
 
 window.goDashboard = function () {
-  window.open("dashboard.html", "_blank");
+  window.location.href = "./dashboard.html";
 };
