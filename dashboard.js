@@ -134,18 +134,19 @@ if (targetCostInput) targetCostInput.value = targetCost;
   // ================= CHART =================
  function drawChart(totalTime, totalCost) {
 
-  targetTime = Number(localStorage.getItem("targetTime")) || 0;
-  targetCost = Number(localStorage.getItem("targetCost")) || 0;
+  const targetTime = Number(localStorage.getItem("targetTime")) || 0;
+  const targetCost = Number(localStorage.getItem("targetCost")) || 0;
 
   if (timeChart) timeChart.destroy();
   if (costChart) costChart.destroy();
 
+  // ===== TIME CHART =====
   timeChart = new Chart(
     document.getElementById("timeChart"),
     {
       type: "bar",
       data: {
-        labels: ["Waktu"],
+        labels: ["Waktu (Menit)"],
         datasets: [
           {
             label: "Target",
@@ -160,16 +161,38 @@ if (targetCostInput) targetCostInput.value = targetCost;
           }
         ]
       },
-      options: { responsive: true }
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: "Perbandingan Target vs Realisasi Waktu",
+            font: { size: 16, weight: "bold" }
+          },
+          legend: {
+            position: "bottom"
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Menit"
+            }
+          }
+        }
+      }
     }
   );
 
+  // ===== COST CHART =====
   costChart = new Chart(
     document.getElementById("costChart"),
     {
       type: "bar",
       data: {
-        labels: ["Cost"],
+        labels: ["Cost (Rp)"],
         datasets: [
           {
             label: "Target",
@@ -184,7 +207,40 @@ if (targetCostInput) targetCostInput.value = targetCost;
           }
         ]
       },
-      options: { responsive: true }
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: "Perbandingan Target vs Realisasi Cost",
+            font: { size: 16, weight: "bold" }
+          },
+          legend: {
+            position: "bottom"
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return "Rp " + context.raw.toLocaleString("id-ID");
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Rupiah"
+            },
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString("id-ID");
+              }
+            }
+          }
+        }
+      }
     }
   );
 }
