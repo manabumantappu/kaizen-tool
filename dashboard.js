@@ -306,3 +306,42 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadData();
 });
+// ================= BACKUP =================
+window.exportKaizenJSON = async function () {
+
+  try {
+
+    const allData = await getAllKaizens();
+
+    if (!allData.length) {
+      alert("Tidak ada data untuk dibackup!");
+      return;
+    }
+
+    // Hapus id & createdAt supaya clean
+    const cleanData = allData.map(item => {
+      const { id, createdAt, ...rest } = item;
+      return rest;
+    });
+
+    const blob = new Blob(
+      [JSON.stringify(cleanData, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kaizen-backup.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("BACKUP ERROR:", err);
+    alert("Gagal melakukan backup.");
+  }
+};
