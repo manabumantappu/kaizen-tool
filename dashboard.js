@@ -187,14 +187,15 @@ function drawChart(totalTime, totalCost) {
         },
         scales: {
           y: {
-            beginAtZero: true,
-            grace: "15%",
-            title: {
-              display: true,
-              text: "Menit"
-            }
-          }
-        }
+           beginAtZero: true,
+  grace: "20%",
+  ticks: {
+    stepSize: 20   // 🔥 jarak antar angka 10 menit
+  },
+  title: {
+    display: true,
+    text: "Menit"
+       }
       },
       plugins: [ChartDataLabels]
     }
@@ -256,15 +257,16 @@ function drawChart(totalTime, totalCost) {
         },
         scales: {
           y: {
-            beginAtZero: true,
-            max: 120,
-            title: {
-              display: true,
-              text: "Persentase (%)"
-            }
-          }
-        }
-      },
+  beginAtZero: true,
+  max: 120,
+  ticks: {
+    stepSize: 20   // 🔥 0, 20, 40, 60, 80, 100
+  },
+  title: {
+    display: true,
+    text: "Persentase (%)"
+  }
+   },
       plugins: [ChartDataLabels]
     }
   );
