@@ -1,6 +1,7 @@
 import {
   getAllKaizens,
-  deleteKaizenById
+  deleteKaizenById,
+  saveKaizenToFirebase
 } from "./services/firebaseService.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,14 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const totalTimeEl = document.getElementById("totalTime");
   const totalCostEl = document.getElementById("totalCost");
 
-const targetTimeInput = document.getElementById("targetTimeInput");
-const targetCostInput = document.getElementById("targetCostInput");
-
-let targetTime = Number(localStorage.getItem("targetTime")) || 0;
-let targetCost = Number(localStorage.getItem("targetCost")) || 0;
-
-if (targetTimeInput) targetTimeInput.value = targetTime;
-if (targetCostInput) targetCostInput.value = targetCost;
+  const targetTimeInput = document.getElementById("targetTimeInput");
+  const targetCostInput = document.getElementById("targetCostInput");
 
   const modal = document.getElementById("photoModal");
   const modalBefore = document.getElementById("modalBefore");
@@ -29,12 +24,20 @@ if (targetCostInput) targetCostInput.value = targetCost;
   let data = [];
   let timeChart, costChart;
 
+  let targetTime = Number(localStorage.getItem("targetTime")) || 0;
+  let targetCost = Number(localStorage.getItem("targetCost")) || 0;
+
+  if (targetTimeInput) targetTimeInput.value = targetTime;
+  if (targetCostInput) targetCostInput.value = targetCost;
+
   // ================= LOAD DATA =================
- window.loadData = async function() {
+  async function loadData() {
     data = await getAllKaizens();
     initYearFilter();
     render();
   }
+
+  window.loadData = loadData;
 
   // ================= INIT YEAR FILTER =================
   function initYearFilter() {
@@ -71,7 +74,7 @@ if (targetCostInput) targetCostInput.value = targetCost;
     let totalTime = 0;
     let totalCost = 0;
 
-    if (filtered.length === 0) {
+    if (!filtered.length) {
       tbody.innerHTML =
         `<tr><td colspan="9">Tidak ada data</td></tr>`;
     }
@@ -131,219 +134,166 @@ if (targetCostInput) targetCostInput.value = targetCost;
     modal.style.display = "none";
   };
 
-  // ================= CHART =================
-function drawChart(totalTime, totalCost) {
-
-  const targetTime = Number(localStorage.getItem("targetTime")) || 0;
-  const targetCost = Number(localStorage.getItem("targetCost")) || 0;
-
-  const percentCost = targetCost > 0
-    ? ((totalCost / targetCost) * 100).toFixed(1)
-    : 0;
-
-  if (timeChart) timeChart.destroy();
-  if (costChart) costChart.destroy();
-
-  // ================= TIME CHART =================
-  timeChart = new Chart(
-    document.getElementById("timeChart"),
-    {
-      type: "bar",
-      data: {
-        labels: ["Waktu (Menit)"],
-        datasets: [
-          {
-            label: "Target",
-            data: [targetTime],
-            backgroundColor: "#bdc3c7"
-          },
-          {
-            label: "Realisasi",
-            data: [totalTime],
-            backgroundColor:
-              totalTime >= targetTime ? "#27ae60" : "#e74c3c"
-          }
-        ]
-      },
-      options: {
-  responsive: true,
-  maintainAspectRatio: false,   // 🔥 penting
-
-  layout: {
-    padding: {
-      top: 20,
-      bottom: 10
-    }
-  },
-
-  plugins: {
-    title: {
-      display: true,
-      text: "Perbandingan Target vs Realisasi Waktu",
-      font: { size: 18, weight: "bold" },
-      padding: { bottom: 50 }
-    },
-
-    legend: {
-      position: "bottom",
-      labels: {
-        boxWidth: 20,
-        padding: 15
-      }
-    },
-
-    datalabels: {
-      anchor: "end",
-      align: "top",
-      offset: 8,
-      font: { weight: "bold", size: 13 },
-      color: "#000",
-      formatter: value => value + " menit"
-    }
-  },
-
-  scales: {
-    y: {
-      beginAtZero: true,
-      grace: "25%",
-      ticks: {
-        stepSize: 20,
-        padding: 8
-      },
-      title: {
-        display: true,
-        text: "Menit",
-        padding: { bottom: 10 }
-      }
-    }
-  }
-},
-      plugins: [ChartDataLabels]
-    }
-  );
-
-  // ================= COST CHART (PRIMARY: RUPIAH) =================
-costChart = new Chart(
-  document.getElementById("costChart"),
-  {
-    type: "bar",
-    data: {
-      labels: ["Cost (Rp)"],
-      datasets: [
-        {
-          label: "Target",
-          data: [targetCost],
-          backgroundColor: "#bdc3c7"
-        },
-        {
-          label: "Realisasi",
-          data: [totalCost],
-          backgroundColor:
-            totalCost >= targetCost ? "#0a3d62" : "#e74c3c"
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-
-      layout: {
-        padding: {
-          top: 40,
-          bottom: 10
-        }
-      },
-
-      plugins: {
-        title: {
-          display: true,
-          text: "Perbandingan Target vs Realisasi Cost",
-          font: { size: 18, weight: "bold" },
-          padding: { bottom: 30 }
-        },
-
-        legend: {
-          position: "bottom"
-        },
-
-        datalabels: {
-          anchor: "end",
-          align: "top",
-          offset: 8,
-          font: { weight: "bold", size: 13 },
-          color: "#000",
-          formatter: value =>
-            "Rp " + value.toLocaleString("id-ID")
-        },
-
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-
-              if (context.dataset.label === "Realisasi") {
-                const percent = targetCost > 0
-                  ? ((totalCost / targetCost) * 100).toFixed(1)
-                  : 0;
-
-                return "Realisasi: Rp " +
-                  totalCost.toLocaleString("id-ID") +
-                  " (" + percent + "%)";
-              }
-
-              return "Target: Rp " +
-                targetCost.toLocaleString("id-ID");
-            }
-          }
-        }
-      },
-
-      scales: {
-        y: {
-          beginAtZero: true,
-          grace: "25%",
-          ticks: {
-            callback: function(value) {
-              return "Rp " + value.toLocaleString("id-ID");
-            }
-          },
-          title: {
-            display: true,
-            text: "Rupiah (Rp)"
-          }
-        }
-      }
-    },
-    plugins: [ChartDataLabels]
-  }
-);
-
   // ================= UPDATE TARGET =================
-  window.updateTarget = function() {
+  window.updateTarget = function () {
 
-  const newTargetTime = Number(targetTimeInput.value);
-  const newTargetCost = Number(targetCostInput.value);
+    const newTargetTime = Number(targetTimeInput.value);
+    const newTargetCost = Number(targetCostInput.value);
 
-  if (newTargetTime < 0 || newTargetCost < 0) {
-    alert("Target tidak valid!");
-    return;
+    if (newTargetTime < 0 || newTargetCost < 0) {
+      alert("Target tidak valid!");
+      return;
+    }
+
+    localStorage.setItem("targetTime", newTargetTime);
+    localStorage.setItem("targetCost", newTargetCost);
+
+    render();
+  };
+
+  // ================= CHART =================
+  function drawChart(totalTime, totalCost) {
+
+    const targetTime =
+      Number(localStorage.getItem("targetTime")) || 0;
+
+    const targetCost =
+      Number(localStorage.getItem("targetCost")) || 0;
+
+    if (timeChart) timeChart.destroy();
+    if (costChart) costChart.destroy();
+
+    // ===== TIME =====
+    timeChart = new Chart(
+      document.getElementById("timeChart"),
+      {
+        type: "bar",
+        data: {
+          labels: ["Waktu (Menit)"],
+          datasets: [
+            {
+              label: "Target",
+              data: [targetTime],
+              backgroundColor: "#bdc3c7"
+            },
+            {
+              label: "Realisasi",
+              data: [totalTime],
+              backgroundColor:
+                totalTime >= targetTime
+                  ? "#27ae60"
+                  : "#e74c3c"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: "Perbandingan Target vs Realisasi Waktu",
+              font: { size: 18, weight: "bold" },
+              padding: { bottom: 40 }
+            },
+            legend: { position: "bottom" },
+            datalabels: {
+              anchor: "end",
+              align: "top",
+              font: { weight: "bold" },
+              formatter: value => value + " menit"
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grace: "25%",
+              ticks: { stepSize: 20 },
+              title: {
+                display: true,
+                text: "Menit"
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      }
+    );
+
+    // ===== COST =====
+    costChart = new Chart(
+      document.getElementById("costChart"),
+      {
+        type: "bar",
+        data: {
+          labels: ["Cost (Rp)"],
+          datasets: [
+            {
+              label: "Target",
+              data: [targetCost],
+              backgroundColor: "#bdc3c7"
+            },
+            {
+              label: "Realisasi",
+              data: [totalCost],
+              backgroundColor:
+                totalCost >= targetCost
+                  ? "#0a3d62"
+                  : "#e74c3c"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: "Perbandingan Target vs Realisasi Cost",
+              font: { size: 18, weight: "bold" },
+              padding: { bottom: 40 }
+            },
+            legend: { position: "bottom" },
+            datalabels: {
+              anchor: "end",
+              align: "top",
+              font: { weight: "bold" },
+              formatter: value =>
+                "Rp " + value.toLocaleString("id-ID")
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grace: "25%",
+              ticks: {
+                callback: value =>
+                  "Rp " + value.toLocaleString("id-ID")
+              },
+              title: {
+                display: true,
+                text: "Rupiah (Rp)"
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      }
+    );
   }
-
-  localStorage.setItem("targetTime", newTargetTime);
-  localStorage.setItem("targetCost", newTargetCost);
-
-  render();
-};
-
 
   // ================= UTIL =================
   function fmt(n) {
-    return (Number(n) || 0).toLocaleString("id-ID");
+    return (Number(n) || 0)
+      .toLocaleString("id-ID");
   }
 
   function formatDate(d) {
     const date = new Date(d);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day =
+      String(date.getDate()).padStart(2, "0");
+    const month =
+      String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
@@ -353,7 +303,8 @@ costChart = new Chart(
 
   loadData();
 });
-// ===== BACKUP FIREBASE =====
+
+// ================= BACKUP =================
 window.exportKaizenJSON = async function () {
 
   const allData = await getAllKaizens();
@@ -379,29 +330,26 @@ window.exportKaizenJSON = async function () {
 
   URL.revokeObjectURL(url);
 };
-import { saveKaizenToFirebase } 
-from "./services/firebaseService.js";
-window.importKaizenJSON = function(event) {
+
+// ================= RESTORE =================
+window.importKaizenJSON = function (event) {
 
   const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
 
-  reader.onload = async function(e) {
+  reader.onload = async function (e) {
 
     try {
 
       const importedData = JSON.parse(e.target.result);
-
-      // Jika bukan array, ubah jadi array
       const dataArray = Array.isArray(importedData)
         ? importedData
         : [importedData];
 
       for (const item of dataArray) {
 
-        // Ambil hanya field yang kita butuhkan
         const cleanData = {
           date: item.date || "",
           section: item.section || "",
@@ -420,17 +368,14 @@ window.importKaizenJSON = function(event) {
       }
 
       alert("Restore berhasil!");
-      loadData();
+      window.loadData();
 
     } catch (err) {
       console.error("RESTORE ERROR:", err);
-      alert("File JSON tidak bisa diproses. Cek console.");
+      alert("File JSON tidak bisa diproses.");
     }
   };
 
   reader.readAsText(file);
   event.target.value = "";
 };
-
-
-
