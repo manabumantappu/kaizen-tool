@@ -171,7 +171,7 @@ function drawChart(totalTime, totalCost) {
 
   layout: {
     padding: {
-      top: 40,
+      top: 20,
       bottom: 10
     }
   },
@@ -181,7 +181,7 @@ function drawChart(totalTime, totalCost) {
       display: true,
       text: "Perbandingan Target vs Realisasi Waktu",
       font: { size: 18, weight: "bold" },
-      padding: { bottom: 30 }
+      padding: { bottom: 50 }
     },
 
     legend: {
@@ -249,7 +249,7 @@ function drawChart(totalTime, totalCost) {
 
   layout: {
     padding: {
-      top: 40,
+      top: 20,
       bottom: 10
     }
   },
@@ -259,7 +259,7 @@ function drawChart(totalTime, totalCost) {
       display: true,
       text: "Persentase Capaian Cost terhadap Target",
       font: { size: 18, weight: "bold" },
-      padding: { bottom: 30 }
+      padding: { bottom: 50 }
     },
 
     legend: {
