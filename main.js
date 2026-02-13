@@ -4,12 +4,12 @@ import {
   getKaizenById
 } from "./services/firebaseService.js";
 
-import { saveKaizen } 
-from "./usecases/saveKaizen.js";
+import { saveKaizen } from "./usecases/saveKaizen.js";
 
-document.addEventListener("DOMContentLoaded", async () => { // ✅ tambahkan async
-document.getElementById("dateDash").innerText =
-  new Date().toLocaleDateString("id-ID");
+document.addEventListener("DOMContentLoaded", async () => {
+
+  document.getElementById("dateDash").innerText =
+    new Date().toLocaleDateString("id-ID");
 
   const timeBefore = document.getElementById("timeBefore");
   const timeAfter = document.getElementById("timeAfter");
@@ -31,24 +31,26 @@ document.getElementById("dateDash").innerText =
 
   // ================= EDIT MODE =================
   if (editId) {
-    const data = await getKaizenById(editId); // ✅ sekarang aman
+    const data = await getKaizenById(editId);
 
-    document.getElementById("kaizenDateInput").value = data.date || "";
-    document.getElementById("section").value = data.section || "";
-    document.getElementById("judulKaizen").value = data.title || "";
-    document.getElementById("timeBefore").value = data.timeBefore || 0;
-    document.getElementById("timeAfter").value = data.timeAfter || 0;
-    document.getElementById("costBefore").value = data.costBefore || 0;
-    document.getElementById("costAfter").value = data.costAfter || 0;
+    if (data) {
+      document.getElementById("kaizenDateInput").value = data.date || "";
+      document.getElementById("section").value = data.section || "";
+      document.getElementById("judulKaizen").value = data.title || "";
+      timeBefore.value = data.timeBefore || 0;
+      timeAfter.value = data.timeAfter || 0;
+      costBefore.value = data.costBefore || 0;
+      costAfter.value = data.costAfter || 0;
 
-    if (data.photoBefore) {
-      previewBefore.src = data.photoBefore;
-      previewBefore.style.display = "block";
-    }
+      if (data.photoBefore) {
+        previewBefore.src = data.photoBefore;
+        previewBefore.style.display = "block";
+      }
 
-    if (data.photoAfter) {
-      previewAfter.src = data.photoAfter;
-      previewAfter.style.display = "block";
+      if (data.photoAfter) {
+        previewAfter.src = data.photoAfter;
+        previewAfter.style.display = "block";
+      }
     }
   }
 
@@ -142,8 +144,11 @@ window.saveKaizen = async function() {
     return;
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get("id");
+
   const newData = {
-    date: dateValue,   // ✅ sekarang dipastikan ada
+    date: dateValue,
     section: document.getElementById("section").value,
     title: document.getElementById("judulKaizen").value,
     timeBefore: Number(document.getElementById("timeBefore").value) || 0,
@@ -156,7 +161,22 @@ window.saveKaizen = async function() {
     photoAfter: document.getElementById("previewAfter").src || ""
   };
 
-  await saveKaizen(newData);
+  try {
+
+    if (editId) {
+      await updateKaizenById(editId, newData);
+      alert("Kaizen berhasil diupdate!");
+    } else {
+      await saveKaizenToFirebase(newData);
+      alert("Kaizen berhasil disimpan!");
+    }
+
+    window.location.href = "./dashboard.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("Gagal menyimpan data!");
+  }
 };
 
 
