@@ -13,11 +13,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const totalTimeEl = document.getElementById("totalTime");
   const totalCostEl = document.getElementById("totalCost");
 
+  const targetTimeInput = document.getElementById("targetTimeInput");
+  const targetCostInput = document.getElementById("targetCostInput");
+
   const modal = document.getElementById("photoModal");
   const modalBefore = document.getElementById("modalBefore");
   const modalAfter = document.getElementById("modalAfter");
 
   let data = [];
+  let timeChart, costChart;
 
   // ================= LOAD DATA =================
   async function loadData() {
@@ -28,11 +32,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ================= INIT YEAR FILTER =================
   function initYearFilter() {
+
     const years = [...new Set(
       data.map(k => new Date(k.date).getFullYear())
     )];
 
-    filterYear.innerHTML = `<option value="all">Semua Tahun</option>`;
+    filterYear.innerHTML =
+      `<option value="all">Semua Tahun</option>`;
 
     years.forEach(y => {
       const opt = document.createElement("option");
@@ -120,43 +126,73 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // ================= CHART =================
-  let timeChart, costChart;
-
   function drawChart(totalTime, totalCost) {
+
+    const targetTime = Number(targetTimeInput.value) || 0;
+    const targetCost = Number(targetCostInput.value) || 0;
 
     if (timeChart) timeChart.destroy();
     if (costChart) costChart.destroy();
 
+    // ===== TIME =====
     timeChart = new Chart(
       document.getElementById("timeChart"),
       {
         type: "bar",
         data: {
-          labels: ["Saving"],
-          datasets: [{
-            label: "Waktu (menit)",
-            data: [totalTime],
-            backgroundColor: "#27ae60"
-          }]
+          labels: ["Waktu"],
+          datasets: [
+            {
+              label: "Target",
+              data: [targetTime],
+              backgroundColor: "#bdc3c7"
+            },
+            {
+              label: "Realisasi",
+              data: [totalTime],
+              backgroundColor: "#27ae60"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
         }
       }
     );
 
+    // ===== COST =====
     costChart = new Chart(
       document.getElementById("costChart"),
       {
         type: "bar",
         data: {
-          labels: ["Saving"],
-          datasets: [{
-            label: "Cost (Rp)",
-            data: [totalCost],
-            backgroundColor: "#0a3d62"
-          }]
+          labels: ["Cost"],
+          datasets: [
+            {
+              label: "Target",
+              data: [targetCost],
+              backgroundColor: "#bdc3c7"
+            },
+            {
+              label: "Realisasi",
+              data: [totalCost],
+              backgroundColor: "#0a3d62"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true } }
         }
       }
     );
   }
+
+  // ================= UPDATE TARGET =================
+  window.updateTarget = function() {
+    render();
+  };
 
   // ================= UTIL =================
   function fmt(n) {
