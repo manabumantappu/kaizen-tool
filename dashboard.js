@@ -444,3 +444,6 @@ window.generatePPT = async function () {
 
   ppt.writeFile("Kaizen-Report.pptx");
 };
+window.goIndex = function () {
+  window.location.href = "index.html";
+};
