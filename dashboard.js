@@ -119,8 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     totalTimeEl.innerText = totalTime;
     totalCostEl.innerText = fmt(totalCost);
 
-    drawChart(totalTime, totalCost);
-  }
+   
 // ===== FOOTER INFO =====
 if (filtered.length > 0) {
   const last = filtered[filtered.length - 1];
@@ -139,6 +138,10 @@ if (filtered.length > 0) {
   document.getElementById("approvedByDash").innerText = "-";
   document.getElementById("dateDash").innerText = "-";
 }
+
+     drawChart(totalTime, totalCost);
+  }
+  
   // ================= DELETE =================
   window.hapus = async function(id) {
     if (!confirm("Hapus Kaizen?")) return;
