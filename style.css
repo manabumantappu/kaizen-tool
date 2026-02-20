@@ -362,17 +362,3 @@ td {
   margin-top: 3px;
 }
 
-
-.logo-box {
-  background: #0f4c81;          /* biru solid */
-  padding: 12px 18px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.enterprise-logo {
-  height: 50px;
-  filter: brightness(0) invert(1);  /* paksa jadi putih */
-}
