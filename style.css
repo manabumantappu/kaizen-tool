@@ -227,10 +227,15 @@ td {
   margin-top: 15px;
 }
 
-.action-bar {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
+.action-bar button:last-child {
+  background: white;
+  color: #0a3d62;
+  border: 2px solid #0a3d62;
+}
+
+.action-bar button:last-child:hover {
+  background: #0a3d62;
+  color: white;
 }
 
 .btn-file input {
