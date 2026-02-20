@@ -121,7 +121,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     drawChart(totalTime, totalCost);
   }
+// ===== FOOTER INFO =====
+if (filtered.length > 0) {
+  const last = filtered[filtered.length - 1];
 
+  document.getElementById("preparedByDash").innerText =
+    last.preparedBy || "-";
+
+  document.getElementById("approvedByDash").innerText =
+    last.approvedBy || "-";
+
+  document.getElementById("dateDash").innerText =
+    formatDate(last.date);
+
+} else {
+  document.getElementById("preparedByDash").innerText = "-";
+  document.getElementById("approvedByDash").innerText = "-";
+  document.getElementById("dateDash").innerText = "-";
+}
   // ================= DELETE =================
   window.hapus = async function(id) {
     if (!confirm("Hapus Kaizen?")) return;
@@ -164,24 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     render();
   };
-// ===== FOOTER INFO =====
-if (filtered.length > 0) {
-  const last = filtered[filtered.length - 1];
 
-  document.getElementById("preparedByDash").innerText =
-    last.preparedBy || "-";
-
-  document.getElementById("approvedByDash").innerText =
-    last.approvedBy || "-";
-
-  document.getElementById("dateDash").innerText =
-    formatDate(last.date) || "-";
-
-} else {
-  document.getElementById("preparedByDash").innerText = "-";
-  document.getElementById("approvedByDash").innerText = "-";
-  document.getElementById("dateDash").innerText = "-";
-}
   // ================= CHART =================
   function drawChart(totalTime, totalCost) {
 
