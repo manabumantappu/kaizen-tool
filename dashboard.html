@@ -124,7 +124,9 @@
 </div>
 
 <!-- ===== ACTION ===== -->
+<<!-- ===== ACTION ===== -->
 <div class="action-bar">
+
   <button onclick="exportKaizenJSON()">📦 Backup JSON</button>
 
   <label class="btn-file">
@@ -132,11 +134,11 @@
     <input type="file" id="importJson" accept=".json"
       onchange="importKaizenJSON(event)">
   </label>
+
+  <!-- 🔥 PINDAHKAN KE SINI -->
+  <button onclick="goIndex()">➕ Input Kaizen</button>
+
 </div>
-<!-- 🔥 MENU BUTTON -->
-    <div class="header-menu">
-      <button onclick="goIndex()">➕ Input Kaizen</button>
-    </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <!-- PDF -->
