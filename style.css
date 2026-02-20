@@ -298,3 +298,66 @@ td {
   background: #0a3d62;
   color: white;
 }
+/* ================= ENTERPRISE HEADER ================= */
+
+.enterprise-header {
+  background: linear-gradient(135deg, #0a3d62, #0f4c81);
+  padding: 18px 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-bottom: 3px solid #1abc9c;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== LEFT ===== */
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.enterprise-logo {
+  height: 65px;
+}
+
+.company-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-name {
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.company-tagline {
+  color: #dcdde1;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== RIGHT ===== */
+
+.header-right {
+  text-align: right;
+}
+
+.system-title {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.system-version {
+  color: #dcdde1;
+  font-size: 11px;
+  margin-top: 3px;
+}
