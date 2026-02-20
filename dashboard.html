@@ -124,19 +124,26 @@
 </div>
 
 <!-- ===== ACTION ===== -->
-<<!-- ===== ACTION ===== -->
 <div class="action-bar">
 
-  <button onclick="exportKaizenJSON()">📦 Backup JSON</button>
+  <button class="btn-outline" onclick="goIndex()">
+    ➕ Input Kaizen
+  </button>
 
-  <label class="btn-file">
+  <button class="btn-outline" onclick="triggerImport()">
     ♻ Restore JSON
-    <input type="file" id="importJson" accept=".json"
-      onchange="importKaizenJSON(event)">
-  </label>
+  </button>
 
-  <!-- 🔥 PINDAHKAN KE SINI -->
-  <button onclick="goIndex()">➕ Input Kaizen</button>
+  <button class="btn-primary" onclick="exportKaizenJSON()">
+    📦 Backup JSON
+  </button>
+
+  <!-- Hidden file input -->
+  <input type="file"
+         id="importJson"
+         accept=".json"
+         style="display:none"
+         onchange="importKaizenJSON(event)">
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
