@@ -6,6 +6,32 @@ import {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+// ===== FOOTER DATE INDEX =====
+const footerDate = document.getElementById("dateDash");
+const dateInput = document.getElementById("kaizenDateInput");
+
+if (dateInput && footerDate) {
+
+  // set default hari ini kalau kosong
+  if (!dateInput.value) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+  }
+
+  // update footer
+  footerDate.innerText = new Date(dateInput.value)
+    .toLocaleDateString("id-ID");
+
+  // kalau tanggal diubah
+  dateInput.addEventListener("change", () => {
+    footerDate.innerText =
+      new Date(dateInput.value)
+        .toLocaleDateString("id-ID");
+  });
+}  
   // ================= DATE DASH =================
   const dateDashEl = document.getElementById("dateDash");
   if (dateDashEl) {
