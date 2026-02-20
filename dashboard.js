@@ -21,9 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalBefore = document.getElementById("modalBefore");
   const modalAfter = document.getElementById("modalAfter");
 
-  window.triggerImport = function () {
-  document.getElementById("importJson").click();
-  };
+ document.getElementById("restoreBtn")
+  .addEventListener("click", () => {
+    document.getElementById("importJson").click();
+});
   
   let data = [];
   let timeChart = null;
